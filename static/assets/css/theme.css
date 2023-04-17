@@ -1,0 +1,316 @@
+@font-face {
+  font-family: 'icomoon';
+  src: url("fonts/icomoon.eot");
+  src: url("fonts/icomoon.eot#iefix") format("embedded-opentype"), url("fonts/icomoon.ttf") format("truetype"), url("fonts/icomoon.woff") format("woff"), url("fonts/icomoon.svg") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+.hvr-shrink {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform;
+  transition-property: transform; }
+
+.hvr-shrink:hover, .hvr-shrink:focus, .hvr-shrink:active {
+  -webkit-transform: scale(0.95);
+  transform: scale(0.95); }
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0); }
+  to {
+    opacity: 1;
+    transform: none; } }
+.fadeInLeft {
+  animation-name: fadeInLeft;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both; }
+
+.main-container {
+  margin-bottom: 0 !important;
+  height: 100vh; }
+
+#left-container {
+  height: 80vh;
+  background: -webkit-linear-gradient(left top, #5634F6, #DB8EC0, #FECAD2);
+  /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(bottom right, #5634F6, #DB8EC0, #FECAD2);
+  /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(bottom right, #5634F6, #DB8EC0, #FECAD2);
+  /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to bottom right, #5634F6, #DB8EC0, #FECAD2);
+  /* Standard syntax */ }
+  @media only screen and (min-width: 601px) {
+    #left-container {
+      position: fixed;
+      float: left;
+      display: inline-block;
+      height: 100vh; } }
+  #left-container .inner-text {
+    height: 100%;
+    text-align: center; }
+  #left-container .text-wrapper {
+    margin: 0 auto; }
+  #left-container #picture {
+    width: 170px;
+    margin-bottom: 40px; }
+  #left-container span {
+    color: #4C34F7; }
+  #left-container #name {
+    font-size: 2em; }
+  #left-container p {
+    color: white;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.5em;
+    line-height: 15px; }
+  #left-container .desc {
+    font-size: 1.4em; }
+  #left-container .left-button {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 8px 20px;
+    background: white;
+    border-radius: 20px;
+    border: 2px solid white;
+    color: white; }
+    #left-container .left-button span {
+      color: #5634F6; }
+    #left-container .left-button:hover {
+      text-decoration: none;
+      background: transparent;
+      border-radius: 0px; }
+      #left-container .left-button:hover span {
+        color: white; }
+
+
+#right-container {
+  float: right;
+  padding: 50px;
+  padding-bottom: 0;
+}
+  #right-container .row {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%; }
+  #right-container span {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1em;
+    color: #5634F6; }
+  #right-container .title, #right-container .desc {
+    height: 100%;
+    display: inline-block; }
+  #right-container .title {
+    padding-right: 50px; }
+  #right-container p {
+    font-family: "Raleway", sans-serif;
+    font-size: 1em; }
+  #right-container h4 {
+    font-family: "Raleway", sans-serif;
+    font-size: 1em; }
+  #right-container .project-container {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    width: 100%;
+    height: 300px; }
+    #right-container .project-container .text-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      text-align: left;
+      padding: 100px 50px;
+      display: none;
+      border-radius: 5px; }
+      #right-container .project-container .text-container p {
+        font-family: "Montserrat", sans-serif;
+        color: white; }
+  
+  /*#right-container .project-image {
+    max-width: 90%;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    /*&:hover {
+    	max-width: 95%;
+    } }
+  #right-container .project-image-grow {
+    animation-name: grow;
+    -webkit-animation-name: grow;
+    animation-duration: 1s;
+    -webkit-animation-duration: 1s;
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear; } */
+  #right-container .emphasize {
+    color: #DB8EC0; }
+  #right-container ul {
+    font-family: "Montserrat", sans-serif; }
+    #right-container ul .year {
+      color: #DB8EC0;
+      margin-right: 10px; }
+
+/*# sourceMappingURL=theme.css.map */
+
+#playing-container {
+  text-align: center;
+  margin-bottom: 20px; 
+}
+
+.playlist-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+
+.track-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+
+.now-playing__status {
+  margin-bottom: 1em;
+}
+
+.now-playing__cover {
+  border-radius: 8px;
+  float: left;
+  margin-right: 10px;
+  text-align: right;
+  width: 300px;
+  height: 300px;
+}
+
+.now-playing__side {
+  margin: 20px;
+  margin-left: 2%;
+  width: 45%;
+  font-family: "Raleway", sans-serif;
+  justify-content: center;
+}
+.playitem-title {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.btn-spotify {
+  border: 2px solid transparent;
+  border-radius:28px;
+  /*background-color:#44c767;
+  border:1px solid #18ab29;
+  color:#ffffff;*/
+  display:inline-block;
+  cursor:pointer;
+  background: #5634F6;
+  color: white;
+  font-family:Arial;
+  font-size:17px;
+  padding: 5px 20px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #2f6627;
+  transition: .3s all;
+  font-family: Montserrat;
+  text-transform: uppercase;
+}
+.btn-spotify.btn-pink {
+  background: rgb(255 132 154);
+}
+.btn-spotify:hover {
+  border-color: #5634F6;
+  color: #5634F6;
+  background: white;
+  border-radius: 0;
+}
+.btn-spotify.btn-pink:hover {
+  border-color: rgb(255 132 154);
+  color: rgb(255 132 154);
+}
+.btn-spotify.btn-pink:focus {
+  background: #2ab7a9;
+  border-radius: 28px;
+  border-color: transparent;
+  color: white;
+}
+.btn-spotify:active {
+  position:relative;
+  top:1px;
+}
+
+
+.rating {
+  position: relative;
+  width: 180px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .3em;
+  padding: 5px;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 0 2px #b3acac;
+}
+
+.rating__result {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(-10px) translateX(-5px);
+  z-index: -9;
+  font: 3em Arial, Helvetica, sans-serif;
+  color: #ebebeb8e;
+  pointer-events: none;
+}
+
+.rating__star {
+  font-size: 1.3em;
+  cursor: pointer;
+  color: #dabd18b2;
+  transition: filter linear .3s;
+}
+
+.rating__star:hover {
+  filter: drop-shadow(1px 1px 4px gold);
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+/* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
