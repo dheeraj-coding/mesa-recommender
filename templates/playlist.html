@@ -67,7 +67,8 @@
                         alt=""
                         style="width: 200px; height:200px"
                 />
-                <div class="now-playing__side" style="align-items: center; margin: auto; padding-top: 20px; padding-bottom: 20px">
+                <div class="now-playing__side"
+                     style="align-items: center; margin: auto; padding-top: 20px; padding-bottom: 20px">
                     <div class="now-playing__name" id="current_track_title" style="text-align: center; margin: auto">
                         Title:
                     </div>
@@ -100,8 +101,9 @@
                     <div class="modal-body">
 
                         <form action="/action_page.php">
-                            <label for="rate" style="font-size: large;">Rate:</label>
-                            <input type="number" maxlength="2" min="1" max="10" id="id_rate" name="rate"><br><br>
+                            <label for="id_rate" style="font-size: large;">Rate:</label>
+                            <input type="range" min="1" max="10" step="1" id="id_rate" name="rate"
+                                   oninput="this.nextElementSibling.value = this.value"><br>
                             <br><br>
                         </form>
                         <!-- <p>Some text in the modal.</p> -->
@@ -204,7 +206,7 @@
             const url = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`
             var tracks = []
             var found = false
-            for (let i=0; i<document.tracks.length; i++) {
+            for (let i = 0; i < document.tracks.length; i++) {
                 trck = document.tracks[i]
                 if (trck.id == trackID) {
                     found = true
