@@ -58,6 +58,7 @@ def to_datetime(date):
 SPOTIFY_CLIENT_ID = get_env_variable("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = get_env_variable("SPOTIFY_CLIENT_SECRET")
 SPOTIFY_REDIRECT_URL = get_env_variable("SPOTIFY_REDIRECT_URL")
+MONGO_URI = get_env_variable("MONGO_URI")
 
 TRAIN_THREAD_MOTIVATION = None
 TRAIN_THREAD_STUDY = None
@@ -383,7 +384,7 @@ def playlists_page(context):
     playlist_id = helpers.get_playlist_id(context, token)
 
     user = database.User(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET,
-                         connxn_string="mongodb://localhost:27017/admin?retryWrites=true&w=majority", user_id=user_id)
+                         connxn_string=MONGO_URI, user_id=user_id)
     hist_ids = user.get_history_song_ids(context)
     rec_tracks = []
     if len(hist_ids) < helpers.MIN_SONGS:
@@ -516,8 +517,9 @@ def check_and_create_playlists(token, user_id):
 
 
 if __name__ == "__main__":
-    app.secret_key = 'super secret key'
-    app.config['SESSION_TYPE'] = 'filesystem'
-    user = User()
-    app.debug = True
-    app.run()
+    # app.secret_key = 'super secret key'
+    # app.config['SESSION_TYPE'] = 'filesystem'
+    # user = User()
+    # app.debug = True
+    # app.run()
+    app.run(host='127.0.0.1', port=8080, debug=True)
