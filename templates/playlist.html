@@ -177,7 +177,7 @@
             const device_id = document.device_id
             // spotify play song api
             const url = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`
-            const uris = document.tracks?.map(track => track.track.uri) ?? [];
+            const uris = document.tracks?.map(track => track.uri) ?? [];
             const payload = {
                 device_id,
                 uris
@@ -252,6 +252,7 @@
             };
 
             const tracks = JSON.parse('{{tracks|tojson}}')
+            document.tracks = tracks
 
             $('#playtrack-container').empty()
             tracks.forEach(track => {

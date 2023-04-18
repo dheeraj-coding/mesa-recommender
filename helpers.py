@@ -66,5 +66,6 @@ def get_plain_recommendations_by_artists(token, seed_artists):
         tobj["id"] = track["id"]
         tobj["name"] = track["name"].replace("\"", "\\\"")
         tobj["img_url"] = track['album']['images'][0]['url']
+        tobj["uri"] = track["uri"]
         output_tracks.append(tobj)
     return output_tracks
