@@ -13,6 +13,9 @@ from flask import redirect, request
 from flask import url_for
 from dotenv import load_dotenv
 import pymongo
+import helpers
+import database
+import random
 
 load_dotenv()  # reads your .env
 
@@ -58,7 +61,7 @@ SPOTIFY_REDIRECT_URL = get_env_variable("SPOTIFY_REDIRECT_URL")
 # What previlege users should give to the app
 # The app can make the following requests on behalf of the user
 # Spotify API docs for other possible scopes -- Need to update scoprd
-SPOTIFY_SCOPES = "user-read-private user-read-email user-read-playback-state user-read-currently-playing user-read-playback-position user-modify-playback-state app-remote-control streaming playlist-modify-public playlist-modify-private playlist-read-private ugc-image-upload"
+SPOTIFY_SCOPES = "user-read-private user-read-email user-read-playback-state user-read-currently-playing user-read-playback-position user-modify-playback-state app-remote-control streaming playlist-modify-public playlist-modify-private playlist-read-private ugc-image-upload user-top-read"
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -335,8 +338,16 @@ def playlists_page(context):
     user_id = request.args.get("user_id")
     data = dict()
     data['token'] = token
+    playlist_id = helpers.get_playlist_id(context, token)
 
-    return render_template("playlist.html", name=user_id, data=data, context=context.capitalize())
+    user = database.User(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET,
+                         connxn_string="mongodb://localhost:27017/admin?retryWrites=true&w=majority", user_id=user_id)
+    hist_ids = user.get_history_song_ids()
+    rec_tracks = []
+    if len(hist_ids) < 10:
+        top_artists = helpers.get_top_artists(token)
+        rec_tracks = helpers.get_plain_recommendations_by_artists(token, ','.join(top_artists))
+    return render_template("playlist.html", name=user_id, data=data, context=context.capitalize(), tracks=rec_tracks)
 
 
 # A decorator used to tell the application which URL is associated function

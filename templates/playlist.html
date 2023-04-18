@@ -53,7 +53,7 @@
         </div>
 
         <div class="row">
-            <h1 class="display-3 text-center" >{{context}}</h1>
+            <h1 class="display-3 text-center">{{context}}</h1>
         </div>
 
         <div id="playing-container">
@@ -197,31 +197,6 @@
             })
         }
 
-        function onSelectPlaylist(playListID) {
-            const tracksURL = `https://api.spotify.com/v1/playlists/${playListID}/tracks`
-            fetch(tracksURL, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            }).then(async (res) => {
-                const json = await res.json();
-                const tracks = json.items;
-                document.tracks = json.items;
-                $('#playtrack-container').empty()
-                tracks.forEach(track => {
-                    // const trackstr = JSON.stringify(track)
-                    const trackItem = $(`
-						<div class="track-item">
-							<img src="${track.track.album.images[0].url}" alt="${track.track.name}" style="width: 50px;height: 50px"/>
-							<h4 class="playitem-title">${track.track.name}</h4>
-							<button class="btn-spotify btn-pink" onclick="onSelectTrack('${track.track.id}')">Play</button>
-						</div>
-					`);
-                    $('#playtrack-container').append(trackItem);
-                })
-            });
-        }
-
         $(document).ready(function () {
 
             // load spotify player sdk
@@ -276,36 +251,23 @@
                 player.connect();
             };
 
-            // const t = '{{token}}'
-            const token = '{{data.token}}'
-            const urlPlayList = `https://api.spotify.com/v1/me/playlists?limit=50`
-            const user_id = 'valencia.duquesnay'
-            // Pull from Jodie's Spotify's account Playlist
-            // const urlPlayList = `https://api.spotify.com/v1/users/${user_id}/playlists`
-            fetch(urlPlayList, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            }).then(async (res) => {
-                const json = await res.json();
-                var playlists = json.items;
-                document.playlists = json.items;
-                // add items to playerlist container
-                $('#playlist-container').empty()
-                playlists = playlists.filter(playlist => playlist.name.includes("MESA"))
-                playlists.forEach(playlist => {
-                    console.log(playlist)
-                    const playlistItem = $(`
-						<div class="playlist-item">
-							<img src="static/motivation.jpeg" alt="${playlist.name}" style="width: 50px;height: 50px"/>
-							<h4 class="playitem-title">${playlist.name}</h4>
-							<button class="btn-spotify btn-pink" onclick="onSelectPlaylist('${playlist.id}')">Select</button>
-						</div>
-					`);
-                    $('#playlist-container').append(playlistItem);
-                })
+            const tracks = JSON.parse('{{tracks|tojson}}')
 
-            });
+            $('#playtrack-container').empty()
+            tracks.forEach(track => {
+                // const trackstr = JSON.stringify(track)
+                const trackItem = $(`
+                    <div class="track-item">
+                        <div class="col-lg-9 col-md-9 col-sm-9 left-align">
+                            <img src="${track.img_url}" alt="${track.name}" style="width: 50px;height: 50px"/>
+                            <h4 style="display: inline-block" class="playitem-title">${track.name}</h4>
+                        </div>
+                        <button class="btn-spotify btn-pink right-align" onclick="onSelectTrack('${track.id}')">Play</button>
+                    </div>
+                `);
+                $('#playtrack-container').append(trackItem);
+            })
+
         });
 
     </script>
