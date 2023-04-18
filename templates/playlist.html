@@ -82,8 +82,8 @@
             <button type="button" class="btn-spotify" data-toggle="modal" data-target="#myModal">Rate</button>
         </div>
 
-        <h4 style="margin-top: 30px;">Track List</h4>
-        <div id="playtrack-container">-</div>
+        <h4 style="margin-top: 30px;" class="row">Track List</h4>
+        <div id="playtrack-container" class="row">-</div>
 
         <div class="modal fade" id="myModal" role="dialog"
              style="background: transparent;border: none; box-shadow: none;">
@@ -258,12 +258,16 @@
             tracks.forEach(track => {
                 // const trackstr = JSON.stringify(track)
                 const trackItem = $(`
-                    <div class="track-item">
-                        <div class="col-lg-9 col-md-9 col-sm-9 left-align">
+                    <div class="track-item row" style="display: flex; flex-direction: row; justify-content: space-between">
+                        <div class="" style="flex: 1">
                             <img src="${track.img_url}" alt="${track.name}" style="width: 50px;height: 50px"/>
-                            <h4 style="display: inline-block" class="playitem-title">${track.name}</h4>
                         </div>
-                        <button class="btn-spotify btn-pink right-align" onclick="onSelectTrack('${track.id}')">Play</button>
+                        <div class=""  style="flex: 3">
+                            <h4 class="playitem-title">${track.name}</h4>
+                        </div>
+                        <div class="" style="flex: 1">
+                            <button class="btn-spotify btn-pink" onclick="onSelectTrack('${track.id}')">Play</button>
+                        </div>
                     </div>
                 `);
                 $('#playtrack-container').append(trackItem);
