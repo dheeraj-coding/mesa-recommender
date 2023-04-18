@@ -38,15 +38,15 @@ def get_top_artists(token):
     return top_artists
 
 
-def get_top_tracks(token):
+def get_top_tracks(token, limit=20):
     headers = {"Authorization": f"Bearer {token}"}
-    get_top_tracks_url = "https://api.spotify.com/v1/me/top/tracks?limit=20"
+    get_top_tracks_url = f"https://api.spotify.com/v1/me/top/tracks?limit={limit}"
     resp = requests.get(get_top_tracks_url, headers=headers)
     resp_parsed = resp.json()
     top_tracks = []
     for artist in resp_parsed["items"]:
         top_tracks.append(artist["id"])
-    top_tracks = random.sample(top_tracks, 5)
+    top_tracks = random.sample(top_tracks, limit)
     return top_tracks
 
 
@@ -74,11 +74,11 @@ def get_plain_recommendations_by_artists(token, seed_artists):
     return output_tracks
 
 
-def load_context_and_recommend(user_id, client_id, client_secret, context):
+def load_context_and_recommend(user_id, client_id, client_secret, context, token):
     user = database.User(client_id, client_secret,
                          connxn_string="mongodb://localhost:27017/admin?retryWrites=true&w=majority", user_id=user_id)
     sp = spotipy.Spotify(auth_manager=spotipy.SpotifyClientCredentials(client_id, client_secret))
-    predictor = bayesucb.BayesUCBPredictor(user, sp, context)
+    predictor = bayesucb.BayesUCBPredictor(user, sp, context, token)
     recs = predictor.recommend(10)
     print("context recs:", recs)
     return recs

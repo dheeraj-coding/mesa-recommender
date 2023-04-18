@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 
 # getting the name of the directory
 # where the this file is present.
@@ -20,6 +21,9 @@ import utils
 import database
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
+sys.path.append('../')
+import helpers
 
 
 class Bayes_UCB_V:
@@ -250,13 +254,14 @@ class BayesUCBTrainer:
 
 
 class BayesUCBPredictor:
-    def __init__(self, user, sp, context):
+    def __init__(self, user, sp, context, token):
         self.epsilon = epsilon
         self.user = user
         # self.model = np.load(f'{user.userID}_model.npz')
         self.model = np.load('d3e0dfeb24424090bf02738a8954b759_model.npz')
         self.sp = sp
         self.context = context
+        self.token = token
 
     def recommend(self, num_samples=1):
         lambda_theta_N = self.model['lambda_theta_N']
@@ -325,10 +330,11 @@ class BayesUCBPredictor:
         return np.array([vectorize(i, self.epsilon) for i in self.get_all_times(song_ids, context)]).T
 
     def gather_seed_songs(self):
-        genres = self.sp.recommendation_genre_seeds()
-        songs = self.sp.recommendations(seed_genres=genres['genres'][:5], limit=50)
-        song_ids = [track['id'] for track in songs['tracks']]
-        return np.array(song_ids)
+        # genres = self.sp.recommendation_genre_seeds()
+        # songs = self.sp.recommendations(seed_genres=genres['genres'][:5], limit=50)
+        # song_ids = [track['id'] for track in songs['tracks']]
+        # return np.array(song_ids)
+        return np.array(helpers.get_top_tracks(self.token, 50))
 
 
 class BayesUCB:
