@@ -392,7 +392,8 @@ def playlists_page(context):
     else:
         recs = helpers.load_context_and_recommend(user_id, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, context, token)
         rec_tracks = helpers.get_tracks_from_id(token, recs)
-    return render_template("playlist.html", name=user_id, data=data, context=context.capitalize(), tracks=rec_tracks)
+    user_info = helpers.get_user_info(token)
+    return render_template("playlist.html", name=user_info["display_name"], data=data, context=context.capitalize(), tracks=rec_tracks)
 
 
 # A decorator used to tell the application which URL is associated function
@@ -478,7 +479,8 @@ def login_callback():
     playlist_ids = check_and_create_playlists(token, curr_user._id)
     print(playlist_ids)
 
-    return render_template("profile.html", name=log_info["user_id"], is_authed=curr_user.is_authenticated, data=data)
+    user_info = helpers.get_user_info(token)
+    return render_template("profile.html", name=user_info["display_name"], is_authed=curr_user.is_authenticated, data=data)
     # return redirect("https://open.spotify.com/?")
 
 

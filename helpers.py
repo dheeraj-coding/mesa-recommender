@@ -62,7 +62,7 @@ def get_seed_genres(token):
 
 def get_plain_recommendations_by_artists(token, seed_artists, N=30):
     headers = {"Authorization": f"Bearer {token}"}
-    get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2*N}&seed_artists={seed_artists}"
+    get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2 * N}&seed_artists={seed_artists}"
     resp = requests.get(get_recs_url, headers=headers)
     resp_parsed = resp.json()
     output_tracks = []
@@ -111,3 +111,11 @@ def train_context(user_id, context, client_id, client_secret):
         ucb = bayesucb.BayesUCBTrainer(user, context)
         ucb.train()
     return
+
+
+def get_user_info(token):
+    headers = {"Authorization": f"Bearer {token}"}
+    get_user_url = "https://api.spotify.com/v1/me"
+    resp = requests.get(get_user_url, headers=headers)
+    resp_parsed = resp.json()
+    return resp_parsed

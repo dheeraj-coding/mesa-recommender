@@ -20,7 +20,7 @@
 <body>
 <div class="row main-container">
     <!-- left container -->
-    <div id="left-container" class="col s12 m6 fadeInLeft">
+    <div id="left-container" class="col l6 s12 m6 fadeInLeft">
         <div class="inner-text valign-wrapper">
             <div class="center-align text-wrapper">
                 <title>Hello from Flask</title>
@@ -59,8 +59,8 @@
             <button class="btn-spotify btn-pink" onclick="onGoBack('{{context}}')">Go Back</button>
         </div>
 
-        <div id="playing-container">
-            <div>
+        <div id="playing-container" class="row">
+            <div class="row">
                 <img
                         id="current_track_image"
                         src="/static/assets/Tim.png"
@@ -77,13 +77,15 @@
                     </div>
                 </div>
             </div>
-            <button class="btn-spotify" onclick="onPreviousTrack()">&lt;&lt;</button>
+            <div class="row">
+                <button class="btn-spotify col-3" onclick="onPreviousTrack()">&lt;&lt;</button>
 
-            <button id="play-pause-button" class="btn-spotify" onclick="onTogglePlay()">PLAY</button>
+                <button id="play-pause-button" class="btn-spotify col-3" onclick="onTogglePlay()">PLAY</button>
 
-            <button class="btn-spotify" onclick="onNextTrack()">&gt;&gt;</button>
+                <button class="btn-spotify col-3" onclick="onNextTrack()">&gt;&gt;</button>
 
-            <button type="button" class="btn-spotify" data-toggle="modal" data-target="#myModal">Rate</button>
+                <button type="button" class="btn-spotify col-3" data-toggle="modal" data-target="#myModal">Rate</button>
+            </div>
         </div>
 
         <h4 style="margin-top: 30px;" class="row">Track List</h4>
