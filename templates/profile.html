@@ -65,97 +65,49 @@
                 <p><span>Calm</span> - a state of tranquility</p>
             </div>
         </div>
+
         <div class="row">
             <div class="col l3 m12 s12 title left-align"><span>CONTEXT</span></div>
-            <section class="col l9 m12 s12 desc left-align emotions">
-                <p><span>Motivation</span> - fill in</p>
-                <p><span>Study</span> - fill in</p>
-                <p><span>Gaming</span> - fill in</p>
-                <p><span>Anger</span> - fill in</p>
-                <p><span>Calm</span> - fill in</p>
-        </div>
-        <div class="row">
-            <div class="col l3 m12 s12 title left-align"><span>PLAYER</span></div>
-            <!--<section class="col l9 m12 s12 desc left-align emotions"></section>-->
-        </div>
+            <section class="col-lg-9 col-md-12 col-sm-12 desc left-align emotions" >
+                <p>
+                    <span class="col-lg-9 col-md-9 col-sm-9">Motivation</span>
+                    <a class="col-lg-3 col-md-3 col-sm-3" href="/playlists/motivation?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
+                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                    </a>
+                </p>
+                <br/>
+                <br/>
+                <p>
+                    <span class="col-lg-9 col-md-9 col-sm-9">Study</span>
+                    <a class="col-lg-3 col-md-3 col-sm-3" href="/playlists/study?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
+                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                    </a>
+                </p>
+                <br/>
+                <br/>
+                <p>
+                    <span class="col-lg-9 col-md-9 col-sm-9">Workout</span>
+                    <a class="col-lg-3 col-md-3 col-sm-3" href="/playlists/workout?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
+                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                    </a>
+                </p>
+                <br/>
+                <br/>
+                <p>
+                    <span class="col-lg-9 col-md-9 col-sm-9">Gaming</span>
+                    <a class="col-lg-3 col-md-3 col-sm-3" href="/playlists/gaming?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
+                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                    </a>
+                </p>
+                <br/>
+                <br/>
+                <p>
+                    <span class="col-lg-9 col-md-9 col-sm-9">Sleep</span>
+                    <a class="col-lg-3 col-md-3 col-sm-3" href="/playlists/sleep?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
+                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                    </a>
+                </p>
 
-
-        <div id="playing-container">
-            <!--<div>Currently Playing</div>-->
-            <div>
-                <img
-                        id="current_track_image"
-                        src="/static/assets/Tim.png"
-                        alt=""
-                        style="width: 200px; height:200px"
-                />
-                <div class="now-playing__side">
-                    <div class="now-playing__name" id="current_track_title">
-                        Title:
-                    </div>
-                    <div class="now-playing__artist" id="current_track_artist">
-                        Artist:
-                    </div>
-                </div>
-            </div>
-            <button
-                    class="btn-spotify"
-                    onclick="onPreviousTrack()"
-
-            >
-                &lt;&lt;
-            </button>
-
-            <button
-                    id="play-pause-button"
-                    class="btn-spotify"
-                    onclick="onTogglePlay()"
-            >
-                <!-- {is_paused ? "PLAY" : "PAUSE"} -->
-                PLAY
-            </button>
-            <button
-                    class="btn-spotify"
-                    onclick="onNextTrack()"
-            >
-                &gt;&gt;
-            </button>
-
-            <button type="button" class="btn-spotify" data-toggle="modal" data-target="#myModal">Rate</button>
-        </div>
-        <h4>Playlist</h4>
-        <div id="playlist-container"></div>
-        <h4 style="margin-top: 30px;">Track List</h4>
-        <div id="playtrack-container">-</div>
-
-        <div class="modal fade" id="myModal" role="dialog"
-             style="background: transparent;border: none; box-shadow: none;">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Rate the song (1-10)</h4>
-                    </div>
-                    <div class="modal-body">
-
-                        <form action="/action_page.php">
-                            <label for="rate" style="font-size: large;">Rate:</label>
-                            <input type="number" maxlength="2" min="1" max="10" id="id_rate" name="rate"><br><br>
-                            <br><br>
-                        </form>
-                        <!-- <p>Some text in the modal.</p> -->
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="submitRate()">
-                            Submit
-                        </button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-
-            </div>
         </div>
 
         <div class="row" style="margin-top: 30px;">
@@ -174,188 +126,5 @@
 
     <script type="text/javascript" src="/static/assets/js/materialize.min.js"></script>
     <script type="text/javascript" src="/static/assets/js/animate.js"></script>
-    <script type="text/javascript">
-        const token = '{{data.token}}'
-
-        // const playListToken = '{{data.playListToken}}'
-
-        function submitRate() {
-            if (!document.track_id) return alert('No track has been selected');
-
-            const rate = +document.getElementById("id_rate").value;
-            const url = `/rate`
-            const payload = new FormData();
-            payload.append('track_id', document.track_id);
-            payload.append('rate', rate);
-
-            if (isNaN(rate)) return alert('Type a valid number');
-            if (!(rate >= 1 && rate <= 10)) return alert('Type a number from 1 to 10');
-
-            fetch(url, {
-                method: 'POST',
-                body: payload
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        }
-
-        function onPreviousTrack() {
-            document.player.previousTrack();
-        }
-
-        function onTogglePlay() {
-            document.player.togglePlay();
-        }
-
-        function onNextTrack() {
-            document.player.nextTrack();
-        }
-
-        function onSelectTrack() {
-            const device_id = document.device_id
-            // spotify play song api
-            const url = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`
-            const uris = document.tracks?.map(track => track.track.uri) ?? [];
-            const payload = {
-                device_id,
-                uris
-            }
-            fetch(url, {
-                method: 'PUT',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(payload)
-            }).then(res => {
-                console.log("Playback started!");
-                document.player.togglePlay();
-                document.player.togglePlay();
-                // play-pause-button
-                document.getElementById('play-pause-button').innerText = 'PAUSE'
-            })
-        }
-
-        function onSelectPlaylist(playListID) {
-            const tracksURL = `https://api.spotify.com/v1/playlists/${playListID}/tracks`
-            fetch(tracksURL, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            }).then(async (res) => {
-                const json = await res.json();
-                const tracks = json.items;
-                document.tracks = json.items;
-                $('#playtrack-container').empty()
-                tracks.forEach(track => {
-                    // const trackstr = JSON.stringify(track)
-                    const trackItem = $(`
-						<div class="track-item">
-							<img src="${track.track.album.images[0].url}" alt="${track.track.name}" style="width: 50px;height: 50px"/>
-							<h4 class="playitem-title">${track.track.name}</h4>
-							<button class="btn-spotify btn-pink" onclick="onSelectTrack('${track.track.id}')">Play</button>
-						</div>
-					`);
-                    $('#playtrack-container').append(trackItem);
-                })
-            });
-        }
-
-        $(document).ready(function () {
-
-            // load spotify player sdk
-            const script = document.createElement("script");
-
-            script.src = "https://sdk.scdn.co/spotify-player.js";
-            script.async = true;
-            document.body.appendChild(script);
-            window.onSpotifyWebPlaybackSDKReady = () => {
-                const player = new window.Spotify.Player({
-                    name: "Python Web Playback SDK Player",
-                    getOAuthToken: (cb) => {
-                        cb(token);
-                    },
-                    volume: 0.5,
-                });
-
-                document.player = player
-
-                player.addListener("ready", ({device_id}) => {
-                    document.device_id = device_id;
-                    // active device for spotify player
-                    player.connect();
-
-
-                });
-
-                player.addListener("not_ready", ({device_id}) => {
-                    console.log("Device ID has gone offline", device_id);
-
-                });
-
-                player.addListener("player_state_changed", (state) => {
-                    console.log("player_state_changed", state);
-                    if (!state) {
-                        return;
-                    }
-                    document.track = state.track_window.current_track
-                    document.paused = state.paused
-                    const text = state.paused ? 'PLAY' : 'PAUSE';
-                    document.track_id = state.track_window.current_track.id
-                    document.getElementById('play-pause-button').innerText = text;
-                    // current_track_image src
-                    document.getElementById('current_track_image').src = state.track_window.current_track.album.images[0].url
-                    document.getElementById('current_track_title').innerText = 'Title: ' + state.track_window.current_track.name;
-                    document.getElementById('current_track_artist').innerText = 'Artist: ' + state.track_window.current_track.artists[0].name
-
-                    player.getCurrentState().then((state) => {
-                        // !state ? setActive(false) : setActive(true);
-                    });
-                });
-                player.connect();
-            };
-
-            // const t = '{{token}}'
-            const token = '{{data.token}}'
-            const urlPlayList = `https://api.spotify.com/v1/me/playlists?limit=50`
-            const user_id = 'valencia.duquesnay'
-            // Pull from Jodie's Spotify's account Playlist
-            // const urlPlayList = `https://api.spotify.com/v1/users/${user_id}/playlists`
-            fetch(urlPlayList, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            }).then(async (res) => {
-                const json = await res.json();
-                var playlists = json.items;
-                document.playlists = json.items;
-                // add items to playerlist container
-                $('#playlist-container').empty()
-                playlists = playlists.filter(playlist => playlist.name.includes("MESA"))
-                playlists.forEach(playlist => {
-                    console.log(playlist)
-                    const playlistItem = $(`
-						<div class="playlist-item">
-							<img src="static/motivation.jpeg" alt="${playlist.name}" style="width: 50px;height: 50px"/>
-							<h4 class="playitem-title">${playlist.name}</h4>
-							<button class="btn-spotify btn-pink" onclick="onSelectPlaylist('${playlist.id}')">Select</button>
-						</div>
-					`);
-                    $('#playlist-container').append(playlistItem);
-                })
-
-                // playlists.forEach(playlist => {
-                // 	const playeliststr = JSON.stringify(playlist)
-                //     console.log(playlist.name)
-                //
-                // })
-            });
-        });
-
-    </script>
 </body>
 </html>

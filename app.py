@@ -329,6 +329,16 @@ def get_data(spotify_token):
     }
 
 
+@app.route("/playlists/<context>")
+def playlists_page(context):
+    token = request.args.get("token")
+    user_id = request.args.get("user_id")
+    data = dict()
+    data['token'] = token
+
+    return render_template("playlist.html", name=user_id, data=data, context=context.capitalize())
+
+
 # A decorator used to tell the application which URL is associated function
 @app.route("/authorize")
 def login_callback():
