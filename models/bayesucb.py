@@ -335,7 +335,11 @@ class BayesUCBPredictor:
         # songs = self.sp.recommendations(seed_genres=genres['genres'][:5], limit=50)
         # song_ids = [track['id'] for track in songs['tracks']]
         # return np.array(song_ids)
-        return np.array(helpers.get_top_tracks(self.token, 50))
+        top_artists = helpers.get_top_artists(self.token)
+        rec_tracks = helpers.get_plain_recommendations_by_artists(self.token, ','.join(top_artists), 50)
+        rec_tracks = [track['id'] for track in rec_tracks]
+        return np.array(rec_tracks)
+        # return np.array(helpers.get_top_tracks(self.token, 50))
 
 
 class BayesUCB:

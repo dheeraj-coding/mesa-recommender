@@ -67,11 +67,11 @@
                         alt=""
                         style="width: 200px; height:200px"
                 />
-                <div class="now-playing__side">
-                    <div class="now-playing__name" id="current_track_title">
+                <div class="now-playing__side" style="align-items: center; margin: auto; padding-top: 20px; padding-bottom: 20px">
+                    <div class="now-playing__name" id="current_track_title" style="text-align: center; margin: auto">
                         Title:
                     </div>
-                    <div class="now-playing__artist" id="current_track_artist">
+                    <div class="now-playing__artist" id="current_track_artist" style="text-align: center; margin: auto">
                         Artist:
                     </div>
                 </div>
@@ -215,7 +215,6 @@
                 }
             }
             tracks.shift()
-            console.log(tracks)
             const uris = tracks?.map(track => track.uri) ?? [];
             const payload = {
                 device_id,

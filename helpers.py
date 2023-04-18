@@ -60,10 +60,10 @@ def get_seed_genres(token):
     return resp_parsed["genres"]
 
 
-def get_plain_recommendations_by_artists(token, seed_artists):
+def get_plain_recommendations_by_artists(token, seed_artists, N=30):
     headers = {"Authorization": f"Bearer {token}"}
-    get_recs_url = "https://api.spotify.com/v1/recommendations?limit=30&seed_artists={}"
-    resp = requests.get(get_recs_url.format(seed_artists), headers=headers)
+    get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2*N}&seed_artists={seed_artists}"
+    resp = requests.get(get_recs_url, headers=headers)
     resp_parsed = resp.json()
     output_tracks = []
     for track in resp_parsed["tracks"]:
@@ -73,6 +73,7 @@ def get_plain_recommendations_by_artists(token, seed_artists):
         tobj["img_url"] = track['album']['images'][0]['url']
         tobj["uri"] = track["uri"]
         output_tracks.append(tobj)
+    output_tracks = random.sample(output_tracks, N)
     return output_tracks
 
 
