@@ -153,6 +153,7 @@
                     console.error('Error:', error);
                 });
         }
+
         addEventListener('beforeunload', unloadBack, true)
 
         const token = '{{data.token}}'
@@ -197,11 +198,26 @@
             document.player.nextTrack();
         }
 
-        function onSelectTrack() {
+        function onSelectTrack(trackID) {
             const device_id = document.device_id
             // spotify play song api
             const url = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`
-            const uris = document.tracks?.map(track => track.uri) ?? [];
+            var tracks = []
+            var found = false
+            console.log("OG ID: " + trackID)
+            for (let i=0; i<document.tracks.length; i++) {
+                trck = document.tracks[i]
+                console.log(trck)
+                if (trck.id == trackID) {
+                    found = true
+                    tracks.push(trck)
+                }
+                if (found) {
+                    tracks.push(trck)
+                }
+            }
+            console.log(tracks)
+            const uris = tracks?.map(track => track.uri) ?? [];
             const payload = {
                 device_id,
                 uris
