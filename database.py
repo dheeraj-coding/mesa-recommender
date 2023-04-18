@@ -38,6 +38,7 @@ class User:
             auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
         self.client = pymongo.MongoClient(connxn_string)
         self.db = self.client['users']['user_history']
+        print(self.db)
         self.userID = client_id
 
         self.db.update_one(
