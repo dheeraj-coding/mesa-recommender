@@ -277,7 +277,7 @@ def authlogin():
         d = get_data(current_user.spotify_token)
 
         # if the user doesn't have a spotify token redirect them to spotify again
-        if d == None:
+        if d is not None:
             print("redurecting to spotify")
             return go_to_spotify()
         else:
