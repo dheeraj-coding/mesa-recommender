@@ -32,6 +32,7 @@ def extract_necessary_features(features):
         result = np.append(result, features[i])
     return result
 
+
 class User:
     def __init__(self, client_id, client_secret, connxn_string, user_id):
         self.sp = spotipy.Spotify(
@@ -39,10 +40,10 @@ class User:
         self.client = pymongo.MongoClient(connxn_string)
         self.db = self.client['users']['user_history']
         print(self.db)
-        self.userID = client_id
+        self.userID = user_id
 
         self.db.update_one(
-            {'userID': self.userID},
+            {'_id': self.userID},
             {'$setOnInsert': {'startTime': datetime.now()}},
             upsert=True,
         )
@@ -52,17 +53,18 @@ class User:
 
     def add_song(self, song_id):
         nowTime = np.datetime64(datetime.now()) - (np.timedelta64(0, 'ms') + int(np.floor(np.random.rand() * 500)))
-        self.db.update_one({'userID': self.userID},
+        self.db.update_one({'_id': self.userID},
                            {'$set': {f'history.{song_id}': {'lastListened': to_datetime(nowTime)}}}, upsert=True)
 
     def add_rating(self, song_id, rating):
-        self.db.update_one({'userID': self.userID}, {'$set': {f'history.{song_id}.rating': rating}})
+        self.db.update_one({'_id': self.userID}, {'$set': {f'history.{song_id}.rating': rating}})
 
-    def get_history_song_ids(self):
-        user = self.db.find_one({'userID': self.userID})
+    def get_history_song_ids(self, context):
+        user = self.db.find_one({'_id': self.userID})
         try:
             ids = user['history'].keys()
             ids = sorted(ids, key=lambda k: user['history'][k]['lastListened'])
+            ids = [i for i in ids if user['history'][i]['context'] == context]
         except:
             ids = []
         return ids
@@ -88,7 +90,7 @@ class User:
 
     def get_history_times(self):
         ids = self.get_history_song_ids()
-        user = self.db.find_one({'userID': self.userID})
+        user = self.db.find_one({'_id': self.userID})
         times = np.array([])
         for song_id in ids:
             lastTime = user['history'][song_id]['lastListened']
@@ -98,18 +100,18 @@ class User:
 
     def get_history_ratings(self):
         ids = self.get_history_song_ids()
-        user = self.db.find_one({'userID': self.userID})
+        user = self.db.find_one({'_id': self.userID})
         ratings = np.array([])
         for song_id in ids:
             rating = user['history'][song_id]['rating']
             ratings = np.append(ratings, rating)
         return ratings
 
-    def merge_times(self, song_ids, times):
-        user = self.db.find_one({'userID': self.userID})
+    def merge_times(self, song_ids, times, context):
+        user = self.db.find_one({'_id': self.userID})
         listened = user['history'].keys()
         for i, id in enumerate(song_ids):
-            if id in listened:
+            if id in listened and user['history'][id]['context'] == context:
                 times[i] = user['history'][id]['lastListened']
 
         return times

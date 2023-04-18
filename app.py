@@ -344,11 +344,13 @@ def playlists_page(context):
 
     user = database.User(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET,
                          connxn_string="mongodb://localhost:27017/admin?retryWrites=true&w=majority", user_id=user_id)
-    hist_ids = user.get_history_song_ids()
+    hist_ids = user.get_history_song_ids(context)
     rec_tracks = []
-    if len(hist_ids) < 10:
+    if len(hist_ids) < 2:
         top_artists = helpers.get_top_artists(token)
         rec_tracks = helpers.get_plain_recommendations_by_artists(token, ','.join(top_artists))
+    else:
+        recs = helpers.load_context_and_recommend(user_id, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, context)
     return render_template("playlist.html", name=user_id, data=data, context=context.capitalize(), tracks=rec_tracks)
 
 

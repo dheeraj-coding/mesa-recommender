@@ -250,13 +250,15 @@ class BayesUCBTrainer:
 
 
 class BayesUCBPredictor:
-    def __init__(self, user, sp):
+    def __init__(self, user, sp, context):
         self.epsilon = epsilon
         self.user = user
-        self.model = np.load(f'{user.userID}_model.npz')
+        # self.model = np.load(f'{user.userID}_model.npz')
+        self.model = np.load('d3e0dfeb24424090bf02738a8954b759_model.npz')
         self.sp = sp
+        self.context = context
 
-    def recommend(self):
+    def recommend(self, num_samples=1):
         lambda_theta_N = self.model['lambda_theta_N']
         eta_theta_N = self.model['eta_theta_N']
         lambda_beta_N = self.model['lambda_beta_N']
@@ -270,20 +272,30 @@ class BayesUCBPredictor:
 
         song_ids = self.gather_seed_songs()
         data = self.get_song_features(song_ids).T
-        time_vectors = self.get_time_vectors(song_ids)
+        time_vectors = self.get_time_vectors(song_ids, self.context)
 
-        N = data.shape[1]
-        quantiles = []
+        recs = []
+        for num in range(num_samples):
 
-        for i in range(N):
-            x_i = data[:, i].reshape((data.shape[0], 1))
-            t_i = time_vectors[:, i].reshape((time_vectors.shape[0], 1))
+            N = data.shape[1]
+            quantiles = []
 
-            quantiles.append(
-                calculate_quantile(x_i, t_i, x_mean_coeff, x_var_coeff, t_mean_coeff, t_var_coeff, 1 - 1 / (N + 1),
-                                   10000))
+            for i in range(N):
+                x_i = data[:, i].reshape((data.shape[0], 1))
+                t_i = time_vectors[:, i].reshape((time_vectors.shape[0], 1))
 
-        return song_ids[np.argmax(quantiles)]
+                quantiles.append(
+                    calculate_quantile(x_i, t_i, x_mean_coeff, x_var_coeff, t_mean_coeff, t_var_coeff, 1 - 1 / (N + 1),
+                                       10000))
+            rec = song_ids[np.argmax(quantiles)]
+            recs.append(rec)
+
+            rec_idx = np.argmax(quantiles)
+            song_ids = np.delete(song_ids, rec_idx, axis=0)
+            data = np.delete(data, rec_idx, axis=1)
+            time_vectors = np.delete(time_vectors, rec_idx, axis=1)
+
+        return recs
 
     def get_song_features(self, song_ids):
         features = np.array([])
@@ -299,18 +311,18 @@ class BayesUCBPredictor:
     def timedelta_to_minute(self, delta):
         return delta.astype('timedelta64[ms]').astype('int')
 
-    def get_all_times(self, song_ids):
+    def get_all_times(self, song_ids, context):
         today = datetime.today()
         start_time = today - relativedelta(minutes=15)
         last_listened_times = np.array([np.datetime64(start_time)] * song_ids.shape[0])
-        self.user.merge_times(song_ids, last_listened_times)
+        self.user.merge_times(song_ids, last_listened_times, context)
         times = [self.timedelta_to_minute(np.datetime64(datetime.now()) - x) for x in
                  last_listened_times]
 
         return np.array(times)
 
-    def get_time_vectors(self, song_ids):
-        return np.array([vectorize(i, self.epsilon) for i in self.get_all_times(song_ids)]).T
+    def get_time_vectors(self, song_ids, context):
+        return np.array([vectorize(i, self.epsilon) for i in self.get_all_times(song_ids, context)]).T
 
     def gather_seed_songs(self):
         genres = self.sp.recommendation_genre_seeds()
