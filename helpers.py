@@ -82,3 +82,19 @@ def load_context_and_recommend(user_id, client_id, client_secret, context):
     recs = predictor.recommend(10)
     print("context recs:", recs)
     return recs
+
+
+def get_tracks_from_id(token, ids):
+    tracks = []
+    headers = {"Authorization": f"Bearer {token}"}
+    get_tracks_url = "https://api.spotify.com/v1/tracks/"
+    for id in ids:
+        resp = requests.get(get_tracks_url + id, headers=headers)
+        resp_parsed = resp.json()
+        track = {}
+        track["id"] = resp_parsed["id"]
+        track["name"] = resp_parsed["name"].replace("\"", "\\\"")
+        track["img_url"] = resp_parsed['album']['images'][0]['url']
+        track["uri"] = resp_parsed["uri"]
+        tracks.append(track)
+    return tracks

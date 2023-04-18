@@ -351,6 +351,7 @@ def playlists_page(context):
         rec_tracks = helpers.get_plain_recommendations_by_artists(token, ','.join(top_artists))
     else:
         recs = helpers.load_context_and_recommend(user_id, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, context)
+        rec_tracks = helpers.get_tracks_from_id(token, recs)
     return render_template("playlist.html", name=user_id, data=data, context=context.capitalize(), tracks=rec_tracks)
 
 
