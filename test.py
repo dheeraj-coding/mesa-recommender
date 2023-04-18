@@ -20,12 +20,12 @@ from spotipy.oauth2 import SpotifyClientCredentials
 # db.add_recommendation('abcde')
 # db.get_history()
 
-client_id='7d3228177cf84c9c92e7a1c11ba1cd11'
-client_secret='8e7201b1f8114ff2b0005bb731a46bb1'
+client_id = '7d3228177cf84c9c92e7a1c11ba1cd11'
+client_secret = '8e7201b1f8114ff2b0005bb731a46bb1'
 
 user = database.User(client_id, client_secret,
                      connxn_string="mongodb://admin:password@0.0.0.0:27017/admin?retryWrites=true&w=majority")
-                     #'mongodb://127.0.0.1:27017/')
+# 'mongodb://127.0.0.1:27017/')
 user.add_song('4AOPgMrdBlaLFF5dxzIhdx')
 user.add_song('2eLDUK7EkpENZkDL9O5yhz')
 user.add_song('7mYrw8DN9vDg1c5qqpDboC')
@@ -39,7 +39,7 @@ user.add_rating('7mYrw8DN9vDg1c5qqpDboC', 9)
 ucb = bayesucb.BayesUCBTrainer(user)
 ucb.train()
 
-sp = spotipy.Spotify(auth_manager=spotipy.SpotifyClientCredentials(client_id ,client_secret))
+sp = spotipy.Spotify(auth_manager=spotipy.SpotifyClientCredentials(client_id, client_secret))
 
 predictor = bayesucb.BayesUCBPredictor(user, sp)
 print(predictor.recommend())

@@ -28,7 +28,7 @@ class Util:
         self.history[-1] = (self.history[-1][0], rating)
         song_id = self.history[-1][0]
         self.last_listened_times[song_id] = np.datetime64(datetime.now()) - (
-                    np.timedelta64(0, 'ms') + int(np.floor(np.random.rand() * 500)))
+                np.timedelta64(0, 'ms') + int(np.floor(np.random.rand() * 500)))
 
     def add_expected_rating(self, rating):
         self.expected_ratings.append(rating)
@@ -58,15 +58,16 @@ class Util:
         return np.array([vectorize(i, self.epsilon) for i in self.get_all_times()]).T
 
     def get_features_and_times_of_song(self, song_id):
-        #print('time', self.timedelta_to_minute(np.datetime64(datetime.now()) - self.last_listened_times[song_id]))
-        return self.data[song_id].T, self.timedelta_to_minute(np.datetime64(datetime.now()) - self.last_listened_times[song_id])
+        # print('time', self.timedelta_to_minute(np.datetime64(datetime.now()) - self.last_listened_times[song_id]))
+        return self.data[song_id].T, self.timedelta_to_minute(
+            np.datetime64(datetime.now()) - self.last_listened_times[song_id])
 
     def get_ratings(self):
         return np.array([x[1] for x in self.history])
 
     def get_features_and_times(self):
         times = self.get_all_times()
-        #times_discretized = np.array([vectorize(i, self.epsilon) for i in times])
+        # times_discretized = np.array([vectorize(i, self.epsilon) for i in times])
         concat_data = np.append(self.data, times[:, None], axis=1)
         xmax, xmin = concat_data.max(), concat_data.min()
         return (concat_data - xmin) / (xmax - xmin)

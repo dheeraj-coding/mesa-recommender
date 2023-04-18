@@ -231,13 +231,14 @@ epsilon = np.array([np.power(2, i) for i in np.arange(0, 16, dtype=float)])
 
 
 class BayesUCBTrainer:
-    def __init__(self, user):
+    def __init__(self, user, context):
         self.user = user
+        self.context = context
 
     def train(self):
-        last_listened = self.user.get_history_times()
-        features = self.user.get_history_song_features().T
-        ratings = self.user.get_history_ratings()
+        last_listened = self.user.get_history_times(self.context)
+        features = self.user.get_history_song_features(self.context).T
+        ratings = self.user.get_history_ratings(self.context)
 
         time_vectors = np.zeros((len(last_listened), len(epsilon) + 2))
         for i, x in enumerate(last_listened):
@@ -249,7 +250,8 @@ class BayesUCBTrainer:
 
         lambda_theta_N, eta_theta_N, lambda_beta_N, eta_beta_N = bayesUCB_V.optimize_parameters()
 
-        np.savez(f'{self.user.userID}_model.npz', lambda_theta_N=lambda_theta_N, eta_theta_N=eta_theta_N,
+        np.savez(f'weights/{self.user.userID}_{self.context}_model.npz', lambda_theta_N=lambda_theta_N,
+                 eta_theta_N=eta_theta_N,
                  lambda_beta_N=lambda_beta_N, eta_beta_N=eta_beta_N)
 
 
@@ -257,8 +259,7 @@ class BayesUCBPredictor:
     def __init__(self, user, sp, context, token):
         self.epsilon = epsilon
         self.user = user
-        # self.model = np.load(f'{user.userID}_model.npz')
-        self.model = np.load('d3e0dfeb24424090bf02738a8954b759_model.npz')
+        self.model = np.load(f'weights/{user.userID}_{context}_model.npz')
         self.sp = sp
         self.context = context
         self.token = token

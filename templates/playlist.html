@@ -55,6 +55,9 @@
         <div class="row">
             <h1 class="display-3 text-center">{{context}}</h1>
         </div>
+        <div class="row text-center">
+            <button class="btn-spotify btn-pink" onclick="onGoBack('{{context}}')">Go Back</button>
+        </div>
 
         <div id="playing-container">
             <div>
@@ -197,6 +200,22 @@
                 // play-pause-button
                 document.getElementById('play-pause-button').innerText = 'PAUSE'
             })
+        }
+
+        function onGoBack(context) {
+            console.log(context)
+            fetch(`/back?context=${context}`, {
+                method: 'GET',
+                redirect: 'follow'
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
         }
 
         $(document).ready(function () {

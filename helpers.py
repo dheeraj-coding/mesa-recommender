@@ -4,6 +4,8 @@ import database
 import spotipy
 from models import bayesucb
 
+MIN_SONGS = 2
+
 
 def get_playlist_id(playlist_context, token):
     headers = {"Authorization": f"Bearer {token}"}
@@ -98,3 +100,13 @@ def get_tracks_from_id(token, ids):
         track["uri"] = resp_parsed["uri"]
         tracks.append(track)
     return tracks
+
+
+def train_context(user_id, context, client_id, client_secret):
+    user = database.User(client_id, client_secret,
+                         connxn_string="mongodb://localhost:27017/admin?retryWrites=true&w=majority", user_id=user_id)
+    ids = user.get_history_song_ids(context)
+    if len(ids) >= MIN_SONGS:
+        ucb = bayesucb.BayesUCBTrainer(user, context)
+        ucb.train()
+    return

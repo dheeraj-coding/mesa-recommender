@@ -75,8 +75,8 @@ class User:
             result = np.append(result, features[i])
         return result
 
-    def get_history_song_features(self):
-        ids = self.get_history_song_ids()
+    def get_history_song_features(self, context):
+        ids = self.get_history_song_ids(context)
         features = np.array([])
 
         for song_id in ids:
@@ -88,8 +88,8 @@ class User:
                 features = np.vstack((features, filtered))
         return features
 
-    def get_history_times(self):
-        ids = self.get_history_song_ids()
+    def get_history_times(self, context):
+        ids = self.get_history_song_ids(context)
         user = self.db.find_one({'_id': self.userID})
         times = np.array([])
         for song_id in ids:
@@ -98,8 +98,8 @@ class User:
             times = np.append(times, deltatime)
         return times
 
-    def get_history_ratings(self):
-        ids = self.get_history_song_ids()
+    def get_history_ratings(self, context):
+        ids = self.get_history_song_ids(context)
         user = self.db.find_one({'_id': self.userID})
         ratings = np.array([])
         for song_id in ids:
