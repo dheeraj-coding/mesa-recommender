@@ -73,7 +73,9 @@
                     <span class="col-lg-9 col-md-9 col-sm-9" style="flex: 1">Motivation</span>
                     <a class="col-lg-3 col-md-3 col-sm-3" style="flex: 1"
                        href="/playlists/motivation?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
-                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                        <button style="background-color: #FF849A; color: white" class="btn-spotify btn-pink" id="btn-motivation"
+                                onclick="onOpenSpinner('btn-motivation')">Open
+                        </button>
                     </a>
                 </p>
                 <br/>
@@ -81,7 +83,8 @@
                     <span class="col-lg-9 col-md-9 col-sm-9" style="flex: 1">Study</span>
                     <a class="col-lg-3 col-md-3 col-sm-3" style="flex: 1"
                        href="/playlists/study?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
-                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                        <button style="background-color: #FF849A; color: white" class="btn-spotify btn-pink" id="btn-study" onclick="onOpenSpinner('btn-study')">Open
+                        </button>
                     </a>
                 </p>
                 <br/>
@@ -89,7 +92,9 @@
                     <span class="col-lg-9 col-md-9 col-sm-9" style="flex: 1">Workout</span>
                     <a class="col-lg-3 col-md-3 col-sm-3" style="flex: 1"
                        href="/playlists/workout?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
-                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                        <button style="background-color: #FF849A; color: white" class="btn-spotify btn-pink" id="btn-workout" onclick="onOpenSpinner('btn-workout')">
+                            Open
+                        </button>
                     </a>
                 </p>
                 <br/>
@@ -97,7 +102,9 @@
                     <span class="col-lg-9 col-md-9 col-sm-9" style="flex: 1">Gaming</span>
                     <a class="col-lg-3 col-md-3 col-sm-3" style="flex: 1"
                        href="/playlists/gaming?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
-                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                        <button style="background-color: #FF849A; color: white" class="btn-spotify btn-pink" id="btn-gaming" onclick="onOpenSpinner('btn-gaming')">
+                            Open
+                        </button>
                     </a>
                 </p>
                 <br/>
@@ -105,7 +112,8 @@
                     <span class="col-lg-9 col-md-9 col-sm-9" style="flex: 1">Sleep</span>
                     <a class="col-lg-3 col-md-3 col-sm-3" style="flex: 1"
                        href="/playlists/sleep?token={{data.token}}&user_id={{data.user_id}}" style="align:right;">
-                        <button class="btn-spotify btn-pink" onclick="">Open</button>
+                        <button style="background-color: #FF849A; color: white" class="btn-spotify btn-pink" id="btn-sleep" onclick="onOpenSpinner('btn-sleep')">Open
+                        </button>
                     </a>
                 </p>
             </section>
@@ -127,5 +135,15 @@
 
     <script type="text/javascript" src="/static/assets/js/materialize.min.js"></script>
     <script type="text/javascript" src="/static/assets/js/animate.js"></script>
+    <script type="text/javascript">
+        function onOpenSpinner(id) {
+            btn = document.getElementById(id);
+            btn.disabled = true
+            btn.style = "background: url('/static/loading.gif') no-repeat center center; background-size: 60% 100%; background-color: #FF849A; border-radius: 25px;"
+            btn.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+
+
+        }
+    </script>
 </body>
 </html>
