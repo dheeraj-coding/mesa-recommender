@@ -136,6 +136,25 @@
     <script type="text/javascript" src="/static/assets/js/materialize.min.js"></script>
     <script type="text/javascript" src="/static/assets/js/animate.js"></script>
     <script type="text/javascript">
+        function unloadBack(e) {
+            e.preventDefault();
+            e.returnValue = "";
+            fetch(`/back?context='{{context}}'`, {
+                method: 'GET',
+                redirect: 'follow'
+            })
+                .then(response => {
+                    removeEventListener('beforeunload', unloadBack, true)
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+        addEventListener('beforeunload', unloadBack, true)
+
         const token = '{{data.token}}'
 
         // const playListToken = '{{data.playListToken}}'
@@ -209,6 +228,7 @@
                 redirect: 'follow'
             })
                 .then(response => {
+                    removeEventListener('beforeunload', unloadBack, true)
                     if (response.redirected) {
                         window.location.href = response.url;
                     }
