@@ -33,7 +33,7 @@ def extract_necessary_features(features):
     return result
 
 class User:
-    def __init__(self, client_id, client_secret, connxn_string):
+    def __init__(self, client_id, client_secret, connxn_string, user_id):
         self.sp = spotipy.Spotify(
             auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
         self.client = pymongo.MongoClient(connxn_string)
@@ -60,8 +60,11 @@ class User:
 
     def get_history_song_ids(self):
         user = self.db.find_one({'userID': self.userID})
-        ids = user['history'].keys()
-        ids = sorted(ids, key=lambda k: user['history'][k]['lastListened'])
+        try:
+            ids = user['history'].keys()
+            ids = sorted(ids, key=lambda k: user['history'][k]['lastListened'])
+        except:
+            ids = []
         return ids
 
     def filter_required_features(self, features):

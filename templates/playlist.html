@@ -105,7 +105,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="submitRate()">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="submitRate('{{context}}')">
                             Submit
                         </button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -136,7 +136,7 @@
 
         // const playListToken = '{{data.playListToken}}'
 
-        function submitRate() {
+        function submitRate(context) {
             if (!document.track_id) return alert('No track has been selected');
 
             const rate = +document.getElementById("id_rate").value;
@@ -144,6 +144,7 @@
             const payload = new FormData();
             payload.append('track_id', document.track_id);
             payload.append('rate', rate);
+            payload.append('context', context.toLowerCase());
 
             if (isNaN(rate)) return alert('Type a valid number');
             if (!(rate >= 1 && rate <= 10)) return alert('Type a number from 1 to 10');

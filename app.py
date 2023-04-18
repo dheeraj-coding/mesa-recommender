@@ -126,11 +126,12 @@ class User:
         self.db.update_one({'_id': _id},
                            {'$set': {f'history.{song_id}': {'lastListened': to_datetime(nowTime)}}}, upsert=True)
 
-    def add_rating(self, _id, song_id, rating):
+    def add_rating(self, _id, song_id, rating, context):
         self.db.update_one({'_id': _id}, {
             '$set': {
                 f'history.{song_id}.lastListened': getNow(),
-                f'history.{song_id}.rating': rating
+                f'history.{song_id}.rating': rating,
+                f'history.{song_id}.context': context
             }
         })
 
@@ -252,11 +253,12 @@ def login():
 def rate():
     track_id = request.form.get("track_id")
     rate = int(request.form.get("rate"))
+    context = request.form.get("context")
 
     # track_id rate
     user = User()
 
-    user.add_rating(current_user.spotify_id, track_id, rate)
+    user.add_rating(current_user.spotify_id, track_id, rate, context)
     return 'ok'
 
 
