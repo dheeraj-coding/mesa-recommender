@@ -4,7 +4,9 @@ import database
 import spotipy
 from models import bayesucb
 from dotenv import load_dotenv
+from google.cloud import storage
 import os
+
 
 def get_env_variable(name):
     try:
@@ -13,8 +15,10 @@ def get_env_variable(name):
         message = "Expected environment variable '{}' not set.".format(name)
         raise Exception(message)
 
+
 MIN_SONGS = 2
 MONGO_URI = get_env_variable("MONGO_URI")
+BUCKET_NAME = get_env_variable("BUCKET_NAME")
 
 
 def get_playlist_id(playlist_context, token):
@@ -80,7 +84,8 @@ def get_plain_recommendations_by_artists(token, seed_artists, N=30):
         tobj = {}
         tobj["id"] = track["id"]
         tobj["name"] = track["name"].replace("\"", "\\\"")
-        tobj["img_url"] = track['album']['images'][0]['url']
+        tobj["img_url"] = track['album']['images'][0]['url'] if len(
+            track['album']['images']) > 0 else "/static/assets/Tim.png"
         tobj["uri"] = track["uri"]
         output_tracks.append(tobj)
     output_tracks = random.sample(output_tracks, N)
@@ -107,7 +112,8 @@ def get_tracks_from_id(token, ids):
         track = {}
         track["id"] = resp_parsed["id"]
         track["name"] = resp_parsed["name"].replace("\"", "\\\"")
-        track["img_url"] = resp_parsed['album']['images'][0]['url']
+        track["img_url"] = resp_parsed['album']['images'][0]['url'] if len(
+            resp_parsed['album']['images']) > 0 else "/static/assets/Tim.png"
         track["uri"] = resp_parsed["uri"]
         tracks.append(track)
     return tracks
@@ -129,3 +135,26 @@ def get_user_info(token):
     resp = requests.get(get_user_url, headers=headers)
     resp_parsed = resp.json()
     return resp_parsed
+
+
+def upload_blob(source_file_name, dest_file_name):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(dest_file_name)
+
+    blob.upload_from_filename(source_file_name)
+
+
+def download_blob(source_file_name, dest_file_name):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(source_file_name)
+
+    blob.download_to_filename(dest_file_name)
+
+
+def check_if_exists_on_bucket(file_name):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(file_name)
+    return blob.exists()
