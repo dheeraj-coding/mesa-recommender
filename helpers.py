@@ -42,16 +42,16 @@ def get_markets(token):
     return resp_parsed["markets"]
 
 
-def get_top_artists(token):
+def get_top_artists(token, limit=5):
     headers = {"Authorization": f"Bearer {token}"}
-    get_top_artists_url = "https://api.spotify.com/v1/me/top/artists?limit=20"
+    get_top_artists_url = "https://api.spotify.com/v1/me/top/artists?limit={}".format(limit * 2)
     resp = requests.get(get_top_artists_url, headers=headers)
     resp_parsed = resp.json()
     top_artists = []
     for artist in resp_parsed["items"]:
         top_artists.append(artist["id"])
-    if len(top_artists) > 5:
-        top_artists = random.sample(top_artists, 5)
+    if len(top_artists) > limit:
+        top_artists = random.sample(top_artists, limit)
     return top_artists
 
 
@@ -77,7 +77,41 @@ def get_seed_genres(token):
 
 def get_plain_recommendations_by_artists(token, seed_artists, N=30):
     headers = {"Authorization": f"Bearer {token}"}
-    get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2 * N}&seed_artists={seed_artists}"
+    seed_genres = get_seed_genres(token)
+    if len(seed_genres) > 5:
+        seed_genres = random.sample(seed_genres, 5)
+    seed_genres = ",".join(seed_genres)
+    toss = random.randint(0, 1)
+    if toss == 0:
+        get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2 * N}&seed_genres={seed_genres}"
+    else:
+        get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2 * N}&seed_artists={seed_artists}"
+    resp = requests.get(get_recs_url, headers=headers)
+    resp_parsed = resp.json()
+    output_tracks = []
+    for track in resp_parsed["tracks"]:
+        tobj = {}
+        tobj["id"] = track["id"]
+        tobj["name"] = track["name"].replace("\"", "\\\"")
+        tobj["img_url"] = track['album']['images'][0]['url'] if len(
+            track['album']['images']) > 0 else "/static/assets/Tim.png"
+        tobj["uri"] = track["uri"]
+        output_tracks.append(tobj)
+    output_tracks = random.sample(output_tracks, N)
+    return output_tracks
+
+
+def get_plain_recommendations_by_tracks(token, seed_tracks, N=30):
+    headers = {"Authorization": f"Bearer {token}"}
+    seed_genres = get_seed_genres(token)
+    if len(seed_genres) > 5:
+        seed_genres = random.sample(seed_genres, 5)
+    seed_genres = ",".join(seed_genres)
+    toss = random.randint(0, 1)
+    if toss == 0:
+        get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2 * N}&seed_tracks={seed_tracks}"
+    else:
+        get_recs_url = f"https://api.spotify.com/v1/recommendations?limit={2 * N}&seed_genres={seed_genres}"
     resp = requests.get(get_recs_url, headers=headers)
     resp_parsed = resp.json()
     output_tracks = []

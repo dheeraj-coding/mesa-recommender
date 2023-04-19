@@ -87,7 +87,9 @@
                 <button type="button" class="btn-spotify col-3" data-toggle="modal" data-target="#myModal">Rate</button>
             </div>
             <div class="row">
-                <button type="button" class="btn-spotify col-10" onclick="onRefreshPlaylist()">Refresh Playlist</button>
+                <button type="button" id="refresh-button" class="btn-spotify col-10" onclick="onRefreshPlaylist()">
+                    Refresh Playlist
+                </button>
             </div>
         </div>
 
@@ -170,7 +172,7 @@
         // const playListToken = '{{data.playListToken}}'
 
         function onRefreshPlaylist() {
-            console.log("Called refresh playlist")
+            document.getElementById('refresh-button').disabled = true
             fetch(`/refresh_playlist?context=${context}&token=${token}&user_id=${user_id}`, {
                 method: 'GET'
             }).then(response => {
@@ -198,9 +200,11 @@
                 `);
                     $('#playtrack-container').append(trackItem);
                 })
+                document.getElementById('refresh-button').disabled = false
 
             }).catch((error) => {
                 console.error('Error:', error);
+                document.getElementById('refresh-button').disabled = false
             });
         }
 
