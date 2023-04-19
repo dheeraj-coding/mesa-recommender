@@ -50,7 +50,8 @@ def get_top_artists(token):
     top_artists = []
     for artist in resp_parsed["items"]:
         top_artists.append(artist["id"])
-    top_artists = random.sample(top_artists, 5)
+    if len(top_artists) > 5:
+        top_artists = random.sample(top_artists, 5)
     return top_artists
 
 
@@ -158,3 +159,18 @@ def check_if_exists_on_bucket(file_name):
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(file_name)
     return blob.exists()
+
+
+def get_contextual_playlist(token, context, user_id, client_id, client_secret):
+    user = database.User(client_id, client_secret, connxn_string=MONGO_URI, user_id=user_id)
+    hist_ids = user.get_history_song_ids(context)
+    print(context)
+    print(len(hist_ids))
+    rec_tracks = []
+    if len(hist_ids) < MIN_SONGS:
+        top_artists = get_top_artists(token)
+        rec_tracks = get_plain_recommendations_by_artists(token, ','.join(top_artists), N=20)
+    else:
+        recs = load_context_and_recommend(user_id, client_id, client_secret, context, token)
+        rec_tracks = get_tracks_from_id(token, recs)
+    return rec_tracks

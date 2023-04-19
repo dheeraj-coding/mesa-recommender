@@ -86,6 +86,9 @@
 
                 <button type="button" class="btn-spotify col-3" data-toggle="modal" data-target="#myModal">Rate</button>
             </div>
+            <div class="row">
+                <button type="button" class="btn-spotify col-10" onclick="onRefreshPlaylist()">Refresh Playlist</button>
+            </div>
         </div>
 
         <h4 style="margin-top: 30px;" class="row">Track List</h4>
@@ -161,8 +164,45 @@
         addEventListener('beforeunload', unloadBack, true)
 
         const token = '{{data.token}}'
+        const context = '{{context}}'
+        const user_id = '{{user_id}}'
 
         // const playListToken = '{{data.playListToken}}'
+
+        function onRefreshPlaylist() {
+            console.log("Called refresh playlist")
+            fetch(`/refresh_playlist?context=${context}&token=${token}&user_id=${user_id}`, {
+                method: 'GET'
+            }).then(response => {
+                return response.json()
+            }).then(data => {
+                console.log(data)
+                document.tracks = data
+                tracks = data
+
+                $('#playtrack-container').empty()
+                tracks.forEach(track => {
+                    // const trackstr = JSON.stringify(track)
+                    const trackItem = $(`
+                    <div class="track-item row" style="display: flex; flex-direction: row; justify-content: space-between">
+                        <div class="" style="flex: 1">
+                            <img src="${track.img_url}" alt="${track.name}" style="width: 50px;height: 50px"/>
+                        </div>
+                        <div class=""  style="flex: 3">
+                            <h4 class="playitem-title">${track.name}</h4>
+                        </div>
+                        <div class="" style="flex: 1">
+                            <button class="btn-spotify btn-pink" onclick="onSelectTrack('${track.id}')">Play</button>
+                        </div>
+                    </div>
+                `);
+                    $('#playtrack-container').append(trackItem);
+                })
+
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+        }
 
         function submitRate(context) {
             if (!document.track_id) return alert('No track has been selected');
