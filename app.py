@@ -16,6 +16,7 @@ import contexts
 import helpers
 import database
 import threading
+import pathlib
 
 load_dotenv()  # reads your .env
 
@@ -26,6 +27,9 @@ from flask_login import (
     login_user,
     logout_user,
 )
+
+# Create folder to store model weights
+pathlib.Path("/tmp/weights/").mkdir(parents=True, exist_ok=True)
 
 
 # Gets environments variable values
@@ -267,7 +271,7 @@ def rate():
     user = User()
 
     user.add_rating(current_user.spotify_id, track_id, rate, context)
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
 @app.route("/auth/login")
@@ -497,7 +501,7 @@ def login_callback():
         fname = f"{curr_user._id}_{ctx.lower()}_model.npz"
         if helpers.check_if_exists_on_bucket(fname):
             print("Bucket file exists: ", fname)
-            helpers.download_blob(fname, f"./weights/{fname}")
+            helpers.download_blob(fname, f"/tmp/weights/{fname}")
 
     return render_template("profile.html", name=user_info["display_name"], is_authed=curr_user.is_authenticated,
                            data=data)

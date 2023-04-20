@@ -8,14 +8,13 @@ import requests
 
 # Flask is a web framework, written in python that lets you develop web applications easily in absence of a web server 
 from flask import Flask, render_template, jsonify
-from flask import session
 from flask import redirect, request
-from flask import url_for
 from dotenv import load_dotenv
 import pymongo
+
+import contexts
 import helpers
 import database
-import random
 import threading
 
 load_dotenv()  # reads your .env
@@ -26,7 +25,6 @@ from flask_login import (
     current_user,
     login_user,
     logout_user,
-    login_required,
 )
 
 
@@ -222,7 +220,8 @@ def authtoken():
             'access_token': access_token
         })
     else:
-        return redirect("https://open.spotify.com/")
+        # return redirect("https://open.spotify.com/")
+        return redirect("/authorize")
         # return json object
         # return {
         #     "is_authenticated": True,
@@ -252,7 +251,8 @@ def login():
             print("redurecting to spotify")
             return go_to_spotify()
         else:
-            return redirect("https://open.spotify.com/")
+            return redirect("/authorize")
+            # return redirect("https://open.spotify.com/")
 
     return "Something went wrong"
 
@@ -267,7 +267,7 @@ def rate():
     user = User()
 
     user.add_rating(current_user.spotify_id, track_id, rate, context)
-    return 'ok'
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 
 @app.route("/auth/login")
@@ -283,15 +283,19 @@ def authlogin():
         return go_to_spotify()
 
     else:
-        print("user already authenticated")
-        d = get_data(current_user.spotify_token)
 
-        # if the user doesn't have a spotify token redirect them to spotify again
-        if d is None:
-            print("redurecting to spotify")
-            return go_to_spotify()
-        else:
-            return redirect("https://open.spotify.com/")
+        return go_to_spotify()
+        #
+        # print("user already authenticated")
+        # d = get_data(current_user.spotify_token)
+        #
+        # # if the user doesn't have a spotify token redirect them to spotify again
+        # if d is None:
+        #     print("redurecting to spotify")
+        #
+        # else:
+        #     return redirect("/authorize")
+        # return redirect("https://open.spotify.com/")
 
     return "Something went wrong"
 
@@ -308,7 +312,7 @@ def current_playing():
 
 
 def get_data(spotify_token):
-    # Not tested 
+    # Not tested
 
     url = "https://api.spotify.com/v1/me/player/currently-playing"
     headers = {"Authorization": "Bearer {}".format(spotify_token)}
@@ -347,32 +351,45 @@ def go_back():
     global TRAIN_THREAD_MOTIVATION, TRAIN_THREAD_GAMING, TRAIN_THREAD_WORKOUT, TRAIN_THREAD_SLEEP, TRAIN_THREAD_STUDY
     context = request.args.get("context")
     context = context.lower()
-    if context == "motivation":
+    if context == contexts.MOTIVATION_CONTEXT:
         TRAIN_THREAD_MOTIVATION = threading.Thread(target=helpers.train_context,
                                                    args=(current_user.spotify_id, context, SPOTIFY_CLIENT_ID,
                                                          SPOTIFY_CLIENT_SECRET))
         TRAIN_THREAD_MOTIVATION.start()
-    elif context == "gaming":
+    elif context == contexts.GAMING_CONTEXT:
         TRAIN_THREAD_GAMING = threading.Thread(target=helpers.train_context,
                                                args=(current_user.spotify_id, context, SPOTIFY_CLIENT_ID,
                                                      SPOTIFY_CLIENT_SECRET))
         TRAIN_THREAD_GAMING.start()
-    elif context == "workout":
+    elif context == contexts.WORKOUT_CONTEXT:
         TRAIN_THREAD_WORKOUT = threading.Thread(target=helpers.train_context,
                                                 args=(current_user.spotify_id, context, SPOTIFY_CLIENT_ID,
                                                       SPOTIFY_CLIENT_SECRET))
         TRAIN_THREAD_WORKOUT.start()
-    elif context == "sleep":
+    elif context == contexts.SLEEP_CONTEXT:
         TRAIN_THREAD_SLEEP = threading.Thread(target=helpers.train_context,
                                               args=(current_user.spotify_id, context, SPOTIFY_CLIENT_ID,
                                                     SPOTIFY_CLIENT_SECRET))
         TRAIN_THREAD_SLEEP.start()
-    elif context == "study":
+    elif context == contexts.STUDY_CONTEXT:
         TRAIN_THREAD_STUDY = threading.Thread(target=helpers.train_context,
                                               args=(current_user.spotify_id, context, SPOTIFY_CLIENT_ID,
                                                     SPOTIFY_CLIENT_SECRET))
         TRAIN_THREAD_STUDY.start()
     return redirect("/")
+
+
+@app.route("/refresh_playlist")
+def refresh_playlists():
+    context = request.args.get("context").lower()
+    token = request.args.get("token")
+    user_id = request.args.get("user_id")
+    print("Refresh playlists")
+    print(user_id)
+
+    rec_tracks = helpers.get_contextual_playlist(token, context, user_id, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
+
+    return json.dumps(rec_tracks)
 
 
 @app.route("/playlists/<context>")
@@ -381,20 +398,13 @@ def playlists_page(context):
     user_id = request.args.get("user_id")
     data = dict()
     data['token'] = token
-    playlist_id = helpers.get_playlist_id(context, token)
 
-    user = database.User(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET,
-                         connxn_string=MONGO_URI, user_id=user_id)
-    hist_ids = user.get_history_song_ids(context)
-    rec_tracks = []
-    if len(hist_ids) < helpers.MIN_SONGS:
-        top_artists = helpers.get_top_artists(token)
-        rec_tracks = helpers.get_plain_recommendations_by_artists(token, ','.join(top_artists))
-    else:
-        recs = helpers.load_context_and_recommend(user_id, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, context, token)
-        rec_tracks = helpers.get_tracks_from_id(token, recs)
+    rec_tracks = helpers.get_contextual_playlist(token, context, user_id, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
+
     user_info = helpers.get_user_info(token)
-    return render_template("playlist.html", name=user_info["display_name"], data=data, context=context.capitalize(), tracks=rec_tracks)
+    return render_template("playlist.html", name=user_info["display_name"], data=data,
+                           context=context.capitalize().strip("'"),
+                           tracks=rec_tracks, user_id=user_id)
 
 
 # A decorator used to tell the application which URL is associated function
@@ -481,7 +491,16 @@ def login_callback():
     print(playlist_ids)
 
     user_info = helpers.get_user_info(token)
-    return render_template("profile.html", name=user_info["display_name"], is_authed=curr_user.is_authenticated, data=data)
+
+    # Download models and keep ready
+    for ctx in contexts.CONTEXTS_ARRAY:
+        fname = f"{curr_user._id}_{ctx.lower()}_model.npz"
+        if helpers.check_if_exists_on_bucket(fname):
+            print("Bucket file exists: ", fname)
+            helpers.download_blob(fname, f"/tmp/weights/{fname}")
+
+    return render_template("profile.html", name=user_info["display_name"], is_authed=curr_user.is_authenticated,
+                           data=data)
     # return redirect("https://open.spotify.com/?")
 
 
