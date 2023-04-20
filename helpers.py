@@ -184,7 +184,10 @@ def download_blob(source_file_name, dest_file_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(source_file_name)
-    open(dest_file_name, 'x').close()
+    try:
+        open(dest_file_name, 'x').close()
+    except FileExistsError:
+        pass
     blob.download_to_filename(dest_file_name)
 
 
