@@ -4,6 +4,12 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.oauth2 import SpotifyClientCredentials
 
+import flask
+from flask import Flask
+from flask import request
+
+app = flask(__name__)
+
 possible_emotions = ["happiness", "sadness", "excited", "angry", "calm"]
 
 genres = ['acoustic', 'afrobeat', 'alt-rock', 'alternative', 'ambient', 'anime', 'black-metal', 'bluegrass', 'blues',
@@ -22,8 +28,8 @@ genres = ['acoustic', 'afrobeat', 'alt-rock', 'alternative', 'ambient', 'anime',
           'turkish', 'work-out', 'world-music']
 
 # INPUT (can be changed by users)
-selected_emotion = 0  # (0 for happiness, 1 for sadness, 2 for excited, 3 for angry, 4 for calm)
-selected_genre = 2  # (from genres list above)
+# selected_emotion = 0  # (0 for happiness, 1 for sadness, 2 for excited, 3 for angry, 4 for calm)
+# selected_genre = 2  # (from genres list above)
 # How wide of range around the emotion center we should search. Could be changed by user?
 variance = 0.1
 
@@ -33,55 +39,76 @@ excited_point = (0.4904556364, 0.6920690909)
 angry_point = (0.498947, 0.66403)
 calm_point = (0.2039461538, 0.03114037793)
 
-valence_min = 0.0
-valence_tar = 0.0
-valence_max = 0.0
+def find_songs(selected_emotion, selected_genre):
+    valence_min = 0.0
+    valence_tar = 0.0
+    valence_max = 0.0
 
-arousal_min = 0.0
-arousal_tar = 0.0
-arousal_max = 0.0
+    arousal_min = 0.0
+    arousal_tar = 0.0
+    arousal_max = 0.0
 
-if selected_emotion == 0:  # happy
-    valence_tar = happiness_point[0]
-    arousal_tar = happiness_point[1]
-elif selected_emotion == 1:  # sadness
-    valence_tar = sadness_point[0]
-    arousal_tar = sadness_point[1]
-elif selected_emotion == 2:  # excited
-    valence_tar = excited_point[0]
-    arousal_tar = excited_point[1]
-elif selected_emotion == 3:  # angry
-    valence_tar = angry_point[0]
-    arousal_tar = angry_point[1]
-elif selected_emotion == 4:  # calm
-    valence_tar = calm_point[0]
-    arousal_tar = calm_point[1]
+    if selected_emotion == 0:  # happy
+        valence_tar = happiness_point[0]
+        arousal_tar = happiness_point[1]
+    elif selected_emotion == 1:  # sadness
+        valence_tar = sadness_point[0]
+        arousal_tar = sadness_point[1]
+    elif selected_emotion == 2:  # excited
+        valence_tar = excited_point[0]
+        arousal_tar = excited_point[1]
+    elif selected_emotion == 3:  # angry
+        valence_tar = angry_point[0]
+        arousal_tar = angry_point[1]
+    elif selected_emotion == 4:  # calm
+        valence_tar = calm_point[0]
+        arousal_tar = calm_point[1]
 
-valence_max = valence_tar + variance
-valence_min = valence_tar - variance
+    valence_max = valence_tar + variance
+    valence_min = valence_tar - variance
 
-arousal_max = arousal_tar + variance
-arousal_min = arousal_tar - variance
+    arousal_max = arousal_tar + variance
+    arousal_min = arousal_tar - variance
 
-spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
 
-my_kwargs = {
-    "min_valence": valence_min,
-    "max_valence": valence_max,
-    "target_valence": valence_tar,
-    "min_arousal": arousal_min,
-    "max_arousal": arousal_max,
-    "target_arousal": arousal_tar,
-}
+    my_kwargs = {
+        "min_valence": valence_min,
+        "max_valence": valence_max,
+        "target_valence": valence_tar,
+        "min_arousal": arousal_min,
+        "max_arousal": arousal_max,
+        "target_arousal": arousal_tar,
+    }
 
-my_selected_genre = genres[selected_genre]
+    my_selected_genre = genres[selected_genre]
 
-this_result = spotify.recommendations(seed_genres=[my_selected_genre], kwargs=my_kwargs)
+    this_result = spotify.recommendations(seed_genres=[my_selected_genre], kwargs=my_kwargs)
 
-my_tracks = this_result["tracks"]
+    my_tracks = this_result["tracks"]
 
-for track in my_tracks:
-    print(track["name"], track["uri"])
+    # for track in my_tracks:
+    #     print(track["name"], track["uri"])
+
+    return my_tracks
 
 # "my_tracks" has the complete list of recommended tracks (default is return 20)
 # In each "track" of "my_tracks", track["uri"] is the Spotify uri for that track, which can be used to reference the track.
+
+@app.route('/search_emotions', methods=["GET"])
+def search_emotions():
+    this_genre = request.form['genre-selection']
+    this_emotion = request.form['emotion-selection']
+
+    my_tracks = find_songs(int(this_emotion), int(this_genre))
+
+    first_ten_tracks = my_tracks[0:10]
+
+    return_string = "<table><tr><th>Song Title</th><th>Song Artist</th><th>Spotify Preview Link</th></tr>"
+
+    for this_track in first_ten_tracks:
+        return_string += "<tr><td>" + this_track["name"] + "</td><td>" + this_track["artists"][0]["name"] + "</td><td>" + this_track["preview_url"] + "</td></tr>"
+
+    return_string += "</table>"
+
+    return return_string
