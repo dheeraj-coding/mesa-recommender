@@ -1,0 +1,63 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    background-color: #000000;
+}
+
+.navbar {
+    height: 100px;
+    width: 100px;
+}
+
+li {
+    font-size: 20px;
+}
+
+.container {
+    padding-left: 10%;
+}
+
+#maincontainer {
+    height: 100%;
+    background: rgb(250, 184, 243);
+    background: linear-gradient(90deg, rgba(250, 184, 243, 1) 0%, rgba(212, 185, 221, 1) 35%, rgba(242, 242, 242, 1) 100%);
+
+}
+
+#title {
+    color: #5634F6;
+}
+
+.btn-bg {
+    background-color: #5634F6;
+    color: white;
+}
+
+.section-container {
+    display: none;
+}
+
+.contactive {
+    display: block;
+}
+
+.glass-card {
+    background-color: rgba(128, 0, 128, 0.5); /* set the purple background color with transparency */
+    backdrop-filter: blur(10px); /* apply a blur effect to the background */
+    border-radius: 10px; /* round the corners of the card */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* add a shadow effect to create depth */
+    padding: 20px; /* add some padding to the card */
+}
+
+.glass-card a:active,
+.glass-card a:visited,
+.glass-card a {
+    color: white;
+}
+
+.glass-card a:hover {
+    color: #5634F6;
+}

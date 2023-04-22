@@ -1,25 +1,141 @@
 <!doctype html>
 <title>Welcome to MESA</title>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<!-- import css -->
-	<link rel="stylesheet" type="text/css" href="/static/assets/css/theme.css">
-	<link href="//fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-	<link href="//fonts.googleapis.com/css?family=Montserrat:400,700, 300" rel="stylesheet">
-	<!--Import Google Icon Font-->
-	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-     
-	<title>MESA</title>
-	
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- import css -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/mainpage.css">
+    <link href="//fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Montserrat:400,700, 300" rel="stylesheet">
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <title>MESA</title>
+
 </head>
 <!-- <form action="/login">
     <input type="submit" class="btn-spotify" >Login With Spotify</input>
 </form> -->
 
-<div class="App">
-    <header class="App-header">
-        <a class="btn-spotify" href="/auth/login" >
-            Login with Spotify 
-        </a>
-    </header>
+<body class="app" id="maincontainer">
+<nav class="navbar navbar-expand-lg p-3 navbar-dark">
+    <a class="navbar-brand" id="title" href="#"><strong>Musify</strong></a>
+    <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+    >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-xs-12 col-lg-6 text-white mt-5">
+            <div class="col contactive section-container" id="section-container1">
+                <h1 class="mt-5">
+                    <strong>
+                        What is
+                        <span id="title">Musify?</span>
+                    </strong>
+                </h1>
+                <p class="glass-card">
+                    Introducing a new music streaming service that adapts to your emotional preferences based
+                    on various activities such as exercising, sleeping, studying, and more. Our service is equipped with
+                    machine learning algorithms that analyze your music choices and tailor personalized
+                    playlists to suit your mood and activity. Whether you need high-energy tunes for your morning
+                    workout or relaxing melodies for bedtime, our service has got you covered. Say goodbye to generic
+                    playlists and hello to a music streaming service that truly understands your unique preferences.
+                </p>
+            </div>
+            <div class="col section-container" id="section-container2">
+                <h1 class="mt-5">
+                    <strong>
+                        Why use
+                        <span id="title">MESA?</span>
+                    </strong>
+                </h1>
+                <p class="glass-card">
+                    Music has been found to have a significant impact on human emotions and behavior. Research has shown
+                    that music can affect mood, motivation, and physiological responses such as heart rate and breathing
+                    rate<sup><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3734071/">[1]</a></sup>. This
+                    suggests that music can be a useful tool for achieving daily goals like
+                    exercising, sleeping, and focusing.
+                    <br>
+                    <br>
+
+                    Studies have also found that listening to music during exercise can improve performance and reduce
+                    perceived exertion <sup><a
+                        href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3339578/">[2]</a></sup>. Similarly, listening
+                    to calming music before bed has been shown to improve sleep quality <sup><a
+                        href="https://pubmed.ncbi.nlm.nih.gov/18426457/">[3]</a></sup>.
+                    By providing
+                    personalized playlists that match users' emotional states and daily goals, our music streaming
+                    service could potentially enhance these benefits.
+                </p>
+            </div>
+            <div class="col section-container" id="section-container3">
+                <h1 class="mt-5">
+                    <strong>
+                        Why use
+                        <span id="title">MESA?</span>
+                    </strong>
+                </h1>
+                <p class="mt-5">
+                </p>
+            </div>
+            <button type="button" onclick="toggleSection('section-container1')" class="btn btn-md mt-4 btn-bg">
+                What?
+            </button>
+            <button type="button" onclick="toggleSection('section-container2')" class="btn btn-md mt-4 btn-bg">
+                Why?
+            </button>
+            <button type="button" onclick="toggleSection('section-container3')" class="btn btn-md mt-4 btn-bg">
+                Login with Spotify
+            </button>
+        </div>
+        <div class="col-xs-12 col-lg-6 mt-5 ml-5" style="padding-left: 10%">
+            <img
+                    src="https://i.postimg.cc/90CkH450/spaceman6-removebg-preview.png"
+                    class="mt-5 ml-5"
+                    width="340px"
+                    height="380px"
+
+            />
+        </div>
+    </div>
 </div>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"
+></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"
+></script>
+<script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"
+></script>
+<script type="text/javascript">
+    function toggleSection(sectionId) {
+        var section = document.getElementById(sectionId);
+        if (section.classList.contains("contactive")) {
+            return; // Do nothing if this section is already active
+        }
+        var activeSection = document.querySelector(".contactive");
+        activeSection.classList.remove("contactive");
+        section.classList.add("contactive");
+    }
+
+</script>
+</body>
+
