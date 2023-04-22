@@ -184,7 +184,10 @@ def download_blob(source_file_name, dest_file_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_NAME)
     blob = bucket.blob(source_file_name)
-
+    try:
+        open(dest_file_name, 'x').close()
+    except FileExistsError:
+        pass
     blob.download_to_filename(dest_file_name)
 
 
@@ -196,12 +199,13 @@ def check_if_exists_on_bucket(file_name):
 
 
 def get_contextual_playlist(token, context, user_id, client_id, client_secret):
-    user = database.User(client_id, client_secret, connxn_string=MONGO_URI, user_id=user_id)
-    hist_ids = user.get_history_song_ids(context)
-    print(context)
-    print(len(hist_ids))
-    rec_tracks = []
-    if len(hist_ids) < MIN_SONGS:
+    # user = database.User(client_id, client_secret, connxn_string=MONGO_URI, user_id=user_id)
+    # hist_ids = user.get_history_song_ids(context)
+    # print(context)
+    # print(len(hist_ids))
+    # rec_tracks = []
+    # if len(hist_ids) < MIN_SONGS:
+    if not check_if_exists_on_bucket(f"{user_id}_{context}_model.npz"):
         top_artists = get_top_artists(token)
         rec_tracks = get_plain_recommendations_by_artists(token, ','.join(top_artists), N=20)
     else:

@@ -53,10 +53,10 @@
         </div>
 
         <div class="row">
-            <h1 class="display-3 text-center">{{context}}</h1>
+            <h1 class="display-3 text-center">{{ context }}</h1>
         </div>
         <div class="row text-center">
-            <button class="btn-spotify btn-pink" onclick="onGoBack('{{context}}')">Go Back</button>
+            <button class="btn-spotify btn-pink" onclick="onGoBack('{{ context }}')">Go Back</button>
         </div>
 
         <div id="playing-container" class="row">
@@ -96,7 +96,7 @@
         <h4 style="margin-top: 30px;" class="row">Track List</h4>
         <div id="playtrack-container" class="row">-</div>
 
-        <div class="modal fade" id="myModal" role="dialog"
+        <div class="modal fade container" id="myModal" role="dialog"
              style="background: transparent;border: none; box-shadow: none;">
             <div class="modal-dialog">
                 <!-- Modal content-->
@@ -118,7 +118,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal"
-                                onclick="submitRate('{{context}}')">
+                                onclick="submitRate('{{ context }}')">
                             Submit
                         </button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -168,8 +168,66 @@
         const token = '{{data.token}}'
         const context = '{{context}}'
         const user_id = '{{user_id}}'
+        document.state_trigger_count = 0
 
         // const playListToken = '{{data.playListToken}}'
+
+        function onPlaylistEnd(callback) {
+            document.getElementById('refresh-button').disabled = true
+            fetch(`/refresh_playlist?context=${context}&token=${token}&user_id=${user_id}`, {
+                method: 'GET'
+            }).then(response => {
+                return response.json()
+            }).then(data => {
+                console.log(data)
+                document.tracks = data
+                tracks = data
+
+                $('#playtrack-container').empty()
+                tracks.forEach(track => {
+                    // const trackstr = JSON.stringify(track)
+                    const trackItem = $(`
+                    <div class="track-item row" style="display: flex; flex-direction: row; justify-content: space-between">
+                        <div class="" style="flex: 1">
+                            <img src="${track.img_url}" alt="${track.name}" style="width: 50px;height: 50px"/>
+                        </div>
+                        <div class=""  style="flex: 3">
+                            <h4 class="playitem-title">${track.name}</h4>
+                        </div>
+                        <div class="" style="flex: 1">
+                            <button class="btn-spotify btn-pink" onclick="onSelectTrack('${track.id}')">Play</button>
+                        </div>
+                    </div>
+                `);
+                    $('#playtrack-container').append(trackItem);
+                })
+                document.getElementById('refresh-button').disabled = false
+                const device_id = document.device_id
+                const url = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`
+
+                const uris = tracks?.map(track => track.uri) ?? [];
+                const payload = {
+                    device_id,
+                    uris
+                }
+                return fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(payload)
+                })
+            }).then(res => {
+                console.log("Playback started!");
+                document.player.togglePlay();
+                // document.player.togglePlay();
+                // play-pause-button
+                document.getElementById('play-pause-button').innerText = 'PAUSE'
+            }).catch((error) => {
+                console.error('Error:', error);
+                document.getElementById('refresh-button').disabled = false
+            });
+        }
 
         function onRefreshPlaylist() {
             document.getElementById('refresh-button').disabled = true
@@ -346,6 +404,21 @@
                     document.getElementById('current_track_image').src = state.track_window.current_track.album.images[0].url
                     document.getElementById('current_track_title').innerText = 'Title: ' + state.track_window.current_track.name;
                     document.getElementById('current_track_artist').innerText = 'Artist: ' + state.track_window.current_track.artists[0].name
+
+                    if (document.getElementById('play-pause-button').innerText === 'PLAY'
+                        && state.paused
+                        && state.track_window.next_tracks.length === 0
+                    ) {
+                        console.log(document.state_trigger_count)
+                        if (document.state_trigger_count < 1) {
+                            document.state_trigger_count += 1
+                            return
+                        } else {
+                            document.state_trigger_count = 0
+                            onPlaylistEnd(() => player.togglePlay())
+                            console.log("Last behavior triggered")
+                        }
+                    }
 
                     player.getCurrentState().then((state) => {
                         // !state ? setActive(false) : setActive(true);

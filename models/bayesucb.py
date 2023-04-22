@@ -250,7 +250,7 @@ class BayesUCBTrainer:
 
         lambda_theta_N, eta_theta_N, lambda_beta_N, eta_beta_N = bayesUCB_V.optimize_parameters()
 
-        src_fname = f'weights/{self.user.userID}_{self.context}_model.npz'
+        src_fname = f'/tmp/weights/{self.user.userID}_{self.context}_model.npz'
         np.savez(src_fname, lambda_theta_N=lambda_theta_N,
                  eta_theta_N=eta_theta_N,
                  lambda_beta_N=lambda_beta_N, eta_beta_N=eta_beta_N)
@@ -261,7 +261,10 @@ class BayesUCBPredictor:
     def __init__(self, user, sp, context, token):
         self.epsilon = epsilon
         self.user = user
-        self.model = np.load(f'weights/{user.userID}_{context}_model.npz')
+        fname = f'/tmp/weights/{user.userID}_{context}_model.npz'
+        if not os.path.exists(fname):
+            helpers.download_blob(f'{user.userID}_{context}_model.npz', fname)
+        self.model = np.load(fname)
         self.sp = sp
         self.context = context
         self.token = token
