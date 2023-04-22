@@ -451,6 +451,7 @@ def login_callback():
 
     print("=========url=", url, token)
     headers = {"Authorization": f"Bearer {token}"}
+
     try:
         r = requests.get(url, headers=headers)
         r.raise_for_status()
@@ -459,7 +460,7 @@ def login_callback():
         return redirect("/error500")
 
     # response from Spotify when we ask for user profile
-    print(r.text)
+    print(r.reason, r.status_code, r.text)
     parsed = r.json()
 
     spotify_id = parsed.pop("id")  # renaming spotfiy id to id
@@ -503,8 +504,8 @@ def login_callback():
     data = log_info
 
     # Code to create playlists for users
-    playlist_ids = check_and_create_playlists(token, curr_user._id)
-    print(playlist_ids)
+    # playlist_ids = check_and_create_playlists(token, curr_user._id)
+    # print(playlist_ids)
 
     user_info = helpers.get_user_info(token)
 
@@ -551,23 +552,28 @@ def check_and_create_playlists(token, user_id):
         playlists["studying"] = playlist_res.json()["id"]
     return playlists
 
+
 @app.route('/search_emotions', methods=["GET"])
 def search_emotions():
     this_genre = request.args.get('genre-selection')
     this_emotion = request.args.get("emotion-selection")
 
+    print(this_emotion, this_genre)
+
     my_tracks = spotify_emotion_search.find_songs(int(this_emotion), int(this_genre))
 
     first_ten_tracks = my_tracks[0:10]
+    out_tracks = []
+    for track in first_ten_tracks:
+        trck = {}
+        trck["name"] = track["name"].replace("\"", "\\\"")
+        trck["img_url"] = track['album']['images'][0]['url'] if len(
+            track['album']['images']) > 0 else "/static/assets/Tim.png"
+        trck["uri"] = track["external_urls"]["spotify"]
+        out_tracks.append(trck)
 
-    return_string = "<table><tr><th>Song Title</th><th>Song Artist</th><th>Spotify Preview Link</th></tr>"
+    return render_template("emotion_playlist.html", tracks=out_tracks)
 
-    for this_track in first_ten_tracks:
-        return_string += "<tr><td>" + this_track["name"] + "</td><td>" + this_track["artists"][0]["name"] + "</td><td>" + this_track["href"] + "</td></tr>"
-
-    return_string += "</table>"
-
-    return return_string
 
 if __name__ == "__main__":
     # app.secret_key = 'super secret key'

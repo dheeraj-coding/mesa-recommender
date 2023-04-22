@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- import css -->
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/theme.css">
+    <link href="//fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Montserrat:400,700, 300" rel="stylesheet">
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="/static/assets/css/materialize.min.css" media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="/static/assets/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>MESA</title>
+
+</head>
+<body class="container-fluid">
+<div class="row main-container">
+    <!-- left container -->
+    <div id="left-container" class="col l6 s12 m6 fadeInLeft">
+        <div class="inner-text valign-wrapper">
+            <div class="center-align text-wrapper">
+                <title>Hello from Flask</title>
+                <img src="/static/assets/Tim.png" id="picture" class="circle"/>
+                {% if name %}
+                <p id="name">Hello {{ name }}!</p>
+                {% endif %}
+                </br>
+                <p class="desc">Welcome to <span> MESA</span></p>
+                </br>
+                <!-- Cool button potentially for feedback but we may not need and jsut delete this section -->
+                <a href="mailto:duquesna@usc.edu" rel="external"
+                   class="left-button waves-effect waves-light valign-wrapper">
+                    <span class="valign">CONTACT US!</span>
+                </a>
+                </br>
+            </div>
+        </div>
+    </div>
+    <!-- right container -->
+    <div class="col s12 m6" id="right-container">
+        <div class="row">
+            <div class="col l3 m12 s12 title left-align"><span>ABOUT MESA</span></div>
+            <div class="col l9 m12 s12 desc left-align">
+                <p>MESA is a Music and Emotion Selection Application that can generating and filter playlists based on
+                    emotional preferences and users can find playlists of songs based on 1. Specific emotions that users
+                    want 2. Specific emotions + situational context
+                </p>
+            </div>
+        </div>
+
+        <div class="row text-center">
+            <button class="btn-spotify btn-pink" onclick="window.location='/auth/login'">Go Back</button>
+        </div>
+
+        <h4 style="margin-top: 30px;" class="row">Track List</h4>
+        <div id="playtrack-container" class="row">-</div>
+
+        <div class="row" style="margin-top: 30px;">
+            <div class="col l3 m12 s12 title left-align"><span>TEAM MEMBERS</span></div>
+            <div class="col l9 m12 s12 desc left-align">
+                <p>Timothy, Dheeraj, James, Jodie
+                </p>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!--Import jQuery before materialize.js-->
+<script type="text/javascript" src="/static/assets/jquery-2.1.1.min.js"></script>
+<script src="/static/assets/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="/static/assets/js/materialize.min.js"></script>
+<script type="text/javascript" src="/static/assets/js/animate.js"></script>
+<script type="text/javascript">
+    function unloadBack(e) {
+        e.preventDefault();
+        e.returnValue = "";
+        fetch(`/back?context='{{context}}'`, {
+            method: 'GET',
+            redirect: 'follow'
+        })
+            .then(response => {
+                removeEventListener('beforeunload', unloadBack, true)
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    addEventListener('beforeunload', unloadBack, true)
+
+    document.state_trigger_count = 0
+
+    function onGoBack(context) {
+        console.log(context)
+        fetch(`/back?context=${context}`, {
+            method: 'GET',
+            redirect: 'follow'
+        })
+            .then(response => {
+                removeEventListener('beforeunload', unloadBack, true)
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+    $(document).ready(function () {
+
+        const tracks = JSON.parse('{{tracks|tojson}}')
+        document.tracks = tracks
+
+        $('#playtrack-container').empty()
+        tracks.forEach(track => {
+            // const trackstr = JSON.stringify(track)
+            const trackItem = $(`
+                    <div class="track-item row" style="display: flex; flex-direction: row; justify-content: space-between">
+                        <div class="" style="flex: 1">
+                            <img src="${track.img_url}" alt="${track.name}" style="width: 50px;height: 50px"/>
+                        </div>
+                        <div class=""  style="flex: 3">
+                            <h4 class="playitem-title">${track.name}</h4>
+                        </div>
+                        <div class="" style="flex: 1">
+                            <button class="btn-spotify btn-pink" onclick="window.open('${track.uri}')">Play</button>
+                        </div>
+                    </div>
+                `);
+            $('#playtrack-container').append(trackItem);
+        })
+
+    });
+
+</script>
+</body>
+</html>
