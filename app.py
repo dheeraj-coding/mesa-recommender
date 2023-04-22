@@ -7,7 +7,7 @@ from furl import furl
 import requests
 
 # Flask is a web framework, written in python that lets you develop web applications easily in absence of a web server 
-from flask import Flask, render_template, jsonify
+from flask import Flask, make_response, render_template, jsonify
 from flask import redirect, request
 from dotenv import load_dotenv
 import pymongo
@@ -17,6 +17,8 @@ import helpers
 import database
 import threading
 import pathlib
+
+import spotify_emotion_search
 
 load_dotenv()  # reads your .env
 
@@ -499,6 +501,7 @@ def login_callback():
     # Download models and keep ready
     for ctx in contexts.CONTEXTS_ARRAY:
         fname = f"{curr_user._id}_{ctx.lower()}_model.npz"
+
         if helpers.check_if_exists_on_bucket(fname):
             print("Bucket file exists: ", fname)
             helpers.download_blob(fname, f"/tmp/weights/{fname}")
@@ -538,6 +541,23 @@ def check_and_create_playlists(token, user_id):
         playlists["studying"] = playlist_res.json()["id"]
     return playlists
 
+@app.route('/search_emotions', methods=["GET"])
+def search_emotions():
+    this_genre = request.args.get('genre-selection')
+    this_emotion = request.args.get("emotion-selection")
+
+    my_tracks = spotify_emotion_search.find_songs(int(this_emotion), int(this_genre))
+
+    first_ten_tracks = my_tracks[0:10]
+
+    return_string = "<table><tr><th>Song Title</th><th>Song Artist</th><th>Spotify Preview Link</th></tr>"
+
+    for this_track in first_ten_tracks:
+        return_string += "<tr><td>" + this_track["name"] + "</td><td>" + this_track["artists"][0]["name"] + "</td><td>" + this_track["href"] + "</td></tr>"
+
+    return_string += "</table>"
+
+    return return_string
 
 if __name__ == "__main__":
     # app.secret_key = 'super secret key'
