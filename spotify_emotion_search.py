@@ -1,4 +1,5 @@
 import json
+import os
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -8,7 +9,19 @@ import flask
 from flask import Flask
 from flask import request
 
-app = flask(__name__)
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def get_env_variable(name):
+    try:
+        return os.environ[name]
+    except KeyError:
+        message = "Expected environment variable '{}' not set.".format(name)
+        raise Exception(message)
+
+SPOTIFY_CLIENT_ID = get_env_variable("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = get_env_variable("SPOTIFY_CLIENT_SECRET")
 
 possible_emotions = ["happiness", "sadness", "excited", "angry", "calm"]
 
@@ -70,7 +83,7 @@ def find_songs(selected_emotion, selected_genre):
     arousal_max = arousal_tar + variance
     arousal_min = arousal_tar - variance
 
-    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+    spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET))
 
     my_kwargs = {
         "min_valence": valence_min,
@@ -94,21 +107,3 @@ def find_songs(selected_emotion, selected_genre):
 
 # "my_tracks" has the complete list of recommended tracks (default is return 20)
 # In each "track" of "my_tracks", track["uri"] is the Spotify uri for that track, which can be used to reference the track.
-
-@app.route('/search_emotions', methods=["GET"])
-def search_emotions():
-    this_genre = request.form['genre-selection']
-    this_emotion = request.form['emotion-selection']
-
-    my_tracks = find_songs(int(this_emotion), int(this_genre))
-
-    first_ten_tracks = my_tracks[0:10]
-
-    return_string = "<table><tr><th>Song Title</th><th>Song Artist</th><th>Spotify Preview Link</th></tr>"
-
-    for this_track in first_ten_tracks:
-        return_string += "<tr><td>" + this_track["name"] + "</td><td>" + this_track["artists"][0]["name"] + "</td><td>" + this_track["preview_url"] + "</td></tr>"
-
-    return_string += "</table>"
-
-    return return_string
