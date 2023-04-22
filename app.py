@@ -411,6 +411,11 @@ def playlists_page(context):
                            tracks=rec_tracks, user_id=user_id)
 
 
+@app.route("/error500")
+def error500():
+    return render_template("error500.html")
+
+
 # A decorator used to tell the application which URL is associated function
 @app.route("/authorize")
 def login_callback():
@@ -444,7 +449,12 @@ def login_callback():
 
     print("=========url=", url, token)
     headers = {"Authorization": f"Bearer {token}"}
-    r = requests.get(url, headers=headers)
+    try:
+        r = requests.get(url, headers=headers)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as err:
+        print(err)
+        return redirect("/error500")
 
     # response from Spotify when we ask for user profile
     print(r.text)
