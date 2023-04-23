@@ -7,7 +7,7 @@ from furl import furl
 import requests
 
 # Flask is a web framework, written in python that lets you develop web applications easily in absence of a web server 
-from flask import Flask, make_response, render_template, jsonify
+from flask import Flask, make_response, render_template, jsonify, Response
 from flask import redirect, request
 from dotenv import load_dotenv
 import pymongo
@@ -205,8 +205,9 @@ def start():
         return render_template("hello.html")
     else:
         # return redirect("https://open.spotify.com/")
-        return render_template("hello.html")
+        # return render_template("hello.html")
         # return redirect("/authorize")
+        return redirect('/auth/login')
 
 
 @app.route("/auth/token")
@@ -382,7 +383,8 @@ def go_back():
                                               args=(current_user.spotify_id, context, SPOTIFY_CLIENT_ID,
                                                     SPOTIFY_CLIENT_SECRET))
         TRAIN_THREAD_STUDY.start()
-    return redirect("/")
+    resp = Response(status=200, mimetype='application/json')
+    return resp
 
 
 @app.route("/refresh_playlist")

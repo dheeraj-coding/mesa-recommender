@@ -56,7 +56,9 @@
             <h1 class="display-3 text-center">{{ context }}</h1>
         </div>
         <div class="row text-center">
-            <button class="btn-spotify btn-pink" onclick="onGoBack('{{ context }}')">Go Back</button>
+            <button style="background-color: #FF849A;" class="btn-spotify btn-pink" id="back-button"
+                    onclick="onGoBack('{{ context }}')">Go Back
+            </button>
         </div>
 
         <div id="playing-container" class="row">
@@ -343,15 +345,21 @@
 
         function onGoBack(context) {
             console.log(context)
+            btn = document.getElementById("back-button")
+            btn.disabled = true
+            btn.style = "background: url('/static/loading.gif') no-repeat center center; background-size: 60% 100%; background-color: #FF849A; border-radius: 25px;"
+            btn.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
             fetch(`/back?context=${context}`, {
                 method: 'GET',
                 redirect: 'follow'
             })
                 .then(response => {
                     removeEventListener('beforeunload', unloadBack, true)
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
+                    // if (response.redirected) {
+                    //     // window.location.href = response.url;
+                    //
+                    // }
+                    window.location = '/auth/login'
                 })
                 .catch((error) => {
                     console.error('Error:', error);
