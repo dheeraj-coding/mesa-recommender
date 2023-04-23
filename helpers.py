@@ -198,6 +198,10 @@ def check_if_exists_on_bucket(file_name):
     return blob.exists()
 
 
+def check_if_exists_local(file_name):
+    return os.path.exists(file_name)
+
+
 def get_contextual_playlist(token, context, user_id, client_id, client_secret):
     # user = database.User(client_id, client_secret, connxn_string=MONGO_URI, user_id=user_id)
     # hist_ids = user.get_history_song_ids(context)

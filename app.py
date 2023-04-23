@@ -515,9 +515,10 @@ def login_callback():
     for ctx in contexts.CONTEXTS_ARRAY:
         fname = f"{curr_user._id}_{ctx.lower()}_model.npz"
 
-        if helpers.check_if_exists_on_bucket(fname):
-            print("Bucket file exists: ", fname)
-            helpers.download_blob(fname, f"/tmp/weights/{fname}")
+        if not helpers.check_if_exists_local('/tmp/weights/' + fname):
+            if helpers.check_if_exists_on_bucket(fname):
+                print("Bucket file exists: ", fname)
+                helpers.download_blob(fname, f"/tmp/weights/{fname}")
 
     return render_template("profile.html", name=user_info["display_name"], is_authed=curr_user.is_authenticated,
                            data=data)
