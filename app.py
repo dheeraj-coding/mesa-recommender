@@ -548,7 +548,7 @@ def search_emotions():
     return_string = "<table><tr><th>Song Title</th><th>Song Artist</th><th>Spotify Preview Link</th></tr>"
 
     for this_track in first_ten_tracks:
-        return_string += "<tr><td>" + this_track["name"] + "</td><td>" + this_track["artists"][0]["name"] + "</td><td>" + this_track["href"] + "</td></tr>"
+        return_string += "<tr><td>" + this_track["name"] + "</td><td>" + this_track["artists"][0]["name"] + "</td><td>" + this_track["external_urls"]["spotify"] + "</td></tr>"
 
     return_string += "</table>"
 
